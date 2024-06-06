@@ -454,8 +454,6 @@ module.exports = {
           message: betMessage + " Would you like to " + playOptions,
         });
 
-
-  
         playerAction = play.action.toLowerCase() === "check" ? "call" : play.action.toLowerCase();
   
         if (playerAction === "raise") {
@@ -468,12 +466,13 @@ module.exports = {
               ", " +
               " How much would you like to raise?",
           validate: async (input) => {
+
             if (isNaN(input)){
               return false;
-            }
+            };
             if (input > playerTurn.money || input < 1) {
                 return false;
-            }
+            };
       
             return true;
           }
@@ -586,7 +585,7 @@ module.exports = {
               : game.bettingRoundPlayers[j].currentBet;
          
 
-            // console.log(game.bettingRoundPlayers[j].name, " added ", addToOthersAllInBet, " to ", game.bettingRoundPlayers[j].allIn);
+            console.log(game.bettingRoundPlayers[j].name, " added ", addToOthersAllInBet, " to ", game.bettingRoundPlayers[j].allIn);
             //  console.log(game.bettingRoundPlayers[j].allIn, " AllInRound:", game.bettingRoundPlayers[j].allInRound )
             // console.log("LBR:", game.bettingRoundPlayers[j].lastBetRound)
             if (

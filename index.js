@@ -23,6 +23,7 @@ const run = async () => {
   } 
 
   console.log("Game Winner: ", poker.game.bettingRoundPlayers[0].name, "In ", poker.game.round, "Rounds");
+  console.log("--------------------------------------------------")
 
   poker.game.bettingRoundPlayers.forEach(player => {
       console.log("BPR: ", player.name, " $", player.money)
@@ -34,5 +35,3 @@ const run = async () => {
 };
 
 run();
-
-

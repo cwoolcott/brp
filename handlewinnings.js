@@ -32,7 +32,7 @@ const readHand = function ({cards, cardStrength}) {
   let result = "";
   if (cardStrength[0] === "High Card") {
     result = (
-      "A High Card of " +
+      "a High Card of " +
       cardStrength[2] +
       " and a " +
       cardStrength[3] +
@@ -43,7 +43,7 @@ const readHand = function ({cards, cardStrength}) {
   }
   if (cardStrength[0] === "Pair") {
     result =  (
-      "A Pair of " +
+      "a Pair of " +
       cardStrength[2] +
       "'s and a " +
       cardStrength[3] +
@@ -63,7 +63,7 @@ const readHand = function ({cards, cardStrength}) {
     );
   } else if (cardStrength[0] === "Three of a Kind") {
     result = (
-      "Three of a Kind with " +
+      "a Three of a Kind with " +
       cardStrength[2] +
       "'s and a " +
       cardStrength[3] +
@@ -71,7 +71,19 @@ const readHand = function ({cards, cardStrength}) {
       cardStrength[4] +
       " Kicker."
     );
-  } else if (cardStrength[0] === "Full House") {
+    
+  } 
+  else if (cardStrength[0] === "Straight") {
+    result = (
+      "a Straight "
+    );
+}
+else if (cardStrength[0] === "Flush") {
+  result = (
+    "a Flush "
+  );
+}
+else if (cardStrength[0] === "Full House") {
     result = (
       "a Full House with " +
       cardStrength[2] +
@@ -80,11 +92,19 @@ const readHand = function ({cards, cardStrength}) {
       "'s"
     );
   }
-    else if (cardStrength[0] === "Straight") {
-      result = (
-        "a Straight "
-      );
+  else if (cardStrength[0] === "Four of a Kind") {
+    result = (
+      "a Four of a Kind with " +
+      cardStrength[2] +
+      "'s"
+    );
   }
+  else if (cardStrength[0] === "Straight Flush") {
+    result = (
+      "a Straight Flush "
+    );
+}
+
   else{
     result = cardStrength[0];
   }

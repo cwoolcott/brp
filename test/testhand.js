@@ -13,34 +13,34 @@ let handValue = analyzeHand([
         "suit": "SPADES"
     },
     {
-        "code": "KS",
+        "code": "AH",
         "image": "https://deckofcardsapi.com/static/img/KD.png",
         "images": {
         "svg": "https://deckofcardsapi.com/static/img/KD.svg",
         "png": "https://deckofcardsapi.com/static/img/KD.png"
         },
-        "value": "KING",
-        "suit": "SPADES"
+        "value": "ACE",
+        "suit": "HEART"
      },
      {
-        "code": "QS",
+        "code": "AC",
         "image": "https://deckofcardsapi.com/static/img/KD.png",
         "images": {
         "svg": "https://deckofcardsapi.com/static/img/KD.svg",
         "png": "https://deckofcardsapi.com/static/img/KD.png"
         },
         "value": "QUEEN",
-        "suit": "SPADES"
+        "suit": "CLUBS"
      },
      {
-        "code": "JS",
+        "code": "AD",
         "image": "https://deckofcardsapi.com/static/img/KD.png",
         "images": {
         "svg": "https://deckofcardsapi.com/static/img/KD.svg",
         "png": "https://deckofcardsapi.com/static/img/KD.png"
         },
-        "value": "JACK",
-        "suit": "SPADES"
+        "value": "ACE",
+        "suit": "DIAMONDS"
      },
      {
         "code": "0S",
@@ -49,7 +49,7 @@ let handValue = analyzeHand([
         "svg": "https://deckofcardsapi.com/static/img/KD.svg",
         "png": "https://deckofcardsapi.com/static/img/KD.png"
         },
-        "value": "10",
+        "value": "ACE",
         "suit": "SPADES"
      },
      {
