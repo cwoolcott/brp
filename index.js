@@ -10,26 +10,17 @@ const run = async () => {
 
   let poker = pokerGame.startGame(human.name);
  
-  //console.log(poker.game.bettingRoundPlayers)
-  //{ currentList: currentList, game: game }
-
-  //Still Players in Game
   while (poker.currentList.length > 1) {
-    if (poker.game.round>20){
-      throw new Error("too many rounds")
+    if (poker.game.round>50){
+      throw new Error("too many rounds.")
     }
-   // console.log("BRP: ", poker.game.bettingRoundPlayers.length, " CL: ", poker.currentList.length)
 
     console.log("ROUND " + poker.game.round + " Begins.");
 
     poker = await pokerGame.playRound(poker.game, poker.currentList);
    
-    //console.log(" poker.currentList",  currentList)
     poker.game = pokerGame.gameConfig(poker.game, poker.currentList);
-   
-   
   } 
-
 
   console.log("Game Winner: ", poker.game.bettingRoundPlayers[0].name, "In ", poker.game.round, "Rounds");
 
@@ -42,7 +33,6 @@ const run = async () => {
     });
 };
 
-
-  run();
+run();
 
 
