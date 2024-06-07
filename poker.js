@@ -113,6 +113,10 @@ module.exports = {
         for (let i = 0; i < currentList.length; i++) {
           if (currentList[i].money < 1) {
             console.log(currentList[i].name + " is out. ");
+            //TEST
+            if (!currentList[i].npc){
+              throw new Error("TEST")
+            }
             currentList.splice(i, 1);
             i--;
           }
@@ -165,6 +169,7 @@ module.exports = {
         game.bettingRoundPlayers[i].position = i;
         game.bettingRoundPlayers[i].allIn = false;
         game.bettingRoundPlayers[i].currentBet = 0;
+        game.bettingRoundPlayers[i].potContribution = 0;
       }
   
       game.pot = 0;
@@ -180,12 +185,14 @@ module.exports = {
       if (game.smallBlind > game.bettingRoundPlayers[smbPos].money) {
         //console.log("--- " , currentList[smbPos].name , " game.smallBlind > currentList[smbPos].money SMALL BLIND:", game.smallBlind, "MONEY:" . currentList[smbPos].money, " Pre Game Pot: ", game.pot)
         game.pot += game.bettingRoundPlayers[smbPos].money;
-        game.bettingRoundPlayers[smbPos].currentBet =game.bettingRoundPlayers[smbPos].money;
+        game.bettingRoundPlayers[smbPos].currentBet = game.bettingRoundPlayers[smbPos].money;
+        game.bettingRoundPlayers[smbPos].potContribution = game.bettingRoundPlayers[smbPos].money;
         game.bettingRoundPlayers[smbPos].allIn = game.pot;
         game.bettingRoundPlayers[smbPos].allInRound = game.cardRound;
         game.bettingRoundPlayers[smbPos].allInBet =
         game.bettingRoundPlayers[smbPos].currentBet;
         game.bettingRoundPlayers[smbPos].money = 0;
+        
         //console.log("--- SMALL BLIND:", game.smallBlind, "MONEY:" . currentList[smbPos].money, " POST Game Pot: ", game.pot)
         console.log(
           "Small Blind Posted by " +
@@ -197,6 +204,7 @@ module.exports = {
       } else {
         game.bettingRoundPlayers[smbPos].money -= game.smallBlind;
         game.bettingRoundPlayers[smbPos].currentBet = game.smallBlind;
+        game.bettingRoundPlayers[smbPos].potContribution =game.smallBlind;
         game.pot += game.smallBlind;
         console.log(
           "Small Blind Posted by " +
@@ -210,6 +218,7 @@ module.exports = {
         //console.log("--- " , currentList[smbPos + 1].name , " game.bigBlind > currentList[smbPos + 1].money BIG BLIND:", game.bigBlind, "MONEY:" . currentList[smbPos + 1].money, " Pre Game Pot: ", game.pot)
         game.pot += game.bettingRoundPlayers[smbPos + 1].money;
         game.currentBet = game.bettingRoundPlayers[smbPos + 1].money;
+        game.bettingRoundPlayers[smbPos + 1].potContribution = game.bettingRoundPlayers[smbPos + 1].money;
         game.bettingRoundPlayers[smbPos + 1].currentBet = game.bettingRoundPlayers[smbPos + 1].money;
         game.bettingRoundPlayers[smbPos + 1].allIn = game.pot;
         game.bettingRoundPlayers[smbPos + 1].allInRound = game.cardRound;
@@ -226,6 +235,7 @@ module.exports = {
       } else {
         game.bettingRoundPlayers[smbPos + 1].money -= game.bigBlind;
         game.currentBet = game.bigBlind;
+        game.bettingRoundPlayers[smbPos + 1].potContribution = game.bigBlind;
         game.pot += game.bigBlind;
         game.bettingRoundPlayers[smbPos + 1].currentBet = game.bigBlind;
         console.log(
@@ -497,6 +507,7 @@ module.exports = {
           console.log(playerTurn.name, " raises all-in " + "for $" + doubleRaise);
           playerTurn.currentBet += playerTurn.money;
           game.pot += playerTurn.money;
+          playerTurn.potContribution += playerTurn.money;
           playerTurn.allInBet = playerTurn.money;
           playerTurn.money = 0;
   
@@ -512,6 +523,7 @@ module.exports = {
         } else {
           console.log(playerTurn.name, " raises " + "$" + doubleRaise);
           let betDifference = doubleRaise - playerTurn.currentBet;
+          playerTurn.potContribution += betDifference;
           playerTurn.currentBet += betDifference;
           playerTurn.money -= betDifference;
           game.pot += betDifference;
@@ -536,6 +548,7 @@ module.exports = {
             );
             game.pot += playerTurn.money;
             playerTurn.currentBet += playerTurn.money;
+            playerTurn.potContribution += playerTurn.money;
             playerTurn.allInBet = playerTurn.money;
             playerTurn.money = 0;
             //playerTurn.allIn = game.pot;
@@ -552,6 +565,7 @@ module.exports = {
             game.pot += betDifference;
             playerTurn.currentBet += betDifference;
             playerTurn.money -= betDifference;
+            playerTurn.potContribution += betDifference;
             game.currentBet = playerTurn.currentBet;
           }
         } else {
@@ -605,11 +619,14 @@ module.exports = {
         game.bettingRoundPlayers[game.currentPosition] = playerTurn;
       }
   
-    //  console.log("-After this Round-")
-    //     console.log("Game Pot: ", game.pot)
-    //   for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
-    //     console.log("LBR:", game.bettingRoundPlayers[j].lastBetRound, " ", game.bettingRoundPlayers[j].name, ": CB $", game.bettingRoundPlayers[j].currentBet, " AllIn:", game.bettingRoundPlayers[j].allIn)
-    //   }
+     console.log("-After this Round-")
+        console.log("Game Pot: ", game.pot)
+      for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
+        console.log("LBR:", game.bettingRoundPlayers[j].lastBetRound, " ", game.bettingRoundPlayers[j].name, 
+        ": CB $", game.bettingRoundPlayers[j].currentBet, " AllIn:", game.bettingRoundPlayers[j].allIn,
+        " potContribution:", game.bettingRoundPlayers[j].potContribution,
+      )
+      }
   
       return game;
     },
