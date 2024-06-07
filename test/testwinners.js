@@ -11,8 +11,8 @@ poker.game.bettingRoundPlayers = [
       name: "x",
       cardStrength: [ 'Flush', 6, '7', '3' ],
       money: 0,
-      allIn: 1600,
-      potContribution: 800
+      allIn: 350,
+      potContribution: 100
    },
 
    {
@@ -20,17 +20,17 @@ poker.game.bettingRoundPlayers = [
       name: "y",
       cardStrength: [ 'Straight', 5, '7', '3' ],
       money: 0,
-      allIn: false,
-      potContribution:800
+      allIn: 2600,
+      potContribution:1350
    },
-   // {
-   //    id: 810,
-   //    name: "z",
-   //    cardStrength: [ 'High Card', 1, '7', '3' ],
-   //    money: 0,
-   //    allIn: 0,
-   //    potContribution:2000
-   // }
+   {
+      id: 810,
+      name: "z",
+      cardStrength: [ 'High Card', 1, '7', '3' ],
+      money: 0,
+      allIn: 2400,
+      potContribution:1150
+   }
 ]
 handleWinnings(poker.game);;
 
