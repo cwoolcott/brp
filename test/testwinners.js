@@ -3,33 +3,54 @@ const handleWinnings = require("../handlewinnings");
 
 let poker = {};
 poker.game = {
-   pot: 1600
+   pot: 152
 };
 poker.game.bettingRoundPlayers = [
    {
       id: 123,
       name: "x",
-      cardStrength: [ 'Flush', 6, '7', '3' ],
+     // cardStrength: [ 'Flush', 6, '7', '3' ],
+     cardStrength: [ 'High Card', 1, 'ACE', 'JACK', '9' ],
       money: 0,
-      allIn: 350,
-      potContribution: 100
+      cards:[{
+         value:"4"
+      },
+      {
+         value:"2"
+      }],
+      allIn: false,
+      potContribution: 50
    },
 
    {
       id: 789,
       name: "y",
-      cardStrength: [ 'Straight', 5, '7', '3' ],
+      //cardStrength: [ 'Straight', 5, '7', '3' ],
+      cardStrength: [ 'High Card', 1, 'ACE', 'JACK', '9' ],
       money: 0,
-      allIn: 2600,
-      potContribution:1350
+      cards:[{
+         value:"4"
+      },
+      {
+         value:"2"
+      }],
+      allIn: false,
+      potContribution:50
    },
    {
-      id: 810,
+      id: 888,
       name: "z",
-      cardStrength: [ 'High Card', 1, '7', '3' ],
+      //cardStrength: [ 'Straight', 5, '7', '3' ],
+      cardStrength: [ 'High Card', 1, 'ACE', 'JACK', '9' ],
       money: 0,
-      allIn: 2400,
-      potContribution:1150
+      cards:[{
+         value:"4"
+      },
+      {
+         value:"2"
+      }],
+      allIn: false,
+      potContribution:50
    }
 ]
 handleWinnings(poker.game);;

@@ -235,6 +235,7 @@ module.exports = {
       } else {
         game.bettingRoundPlayers[smbPos + 1].money -= game.bigBlind;
         game.currentBet = game.bigBlind;
+        
         game.bettingRoundPlayers[smbPos + 1].potContribution = game.bigBlind;
         game.pot += game.bigBlind;
         game.bettingRoundPlayers[smbPos + 1].currentBet = game.bigBlind;
@@ -246,6 +247,12 @@ module.exports = {
             "."
         );
       }
+      
+      // for (let i = 0; i < game.bettingRoundPlayers.length; i++) {
+
+      //  console.log("AFTER BLIND", game.bettingRoundPlayers[i].potContribution) 
+      // }
+
       //console.log("BigBlind:", game.bettingRoundPlayers[smbPos + 1].name, " SB:", game.bettingRoundPlayers[smbPos + 1].currentBet);
       return game;
     },
