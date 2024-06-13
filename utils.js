@@ -11,6 +11,7 @@ const utils = {
   areValuesInArraySame(array, key) {
     if (array.length === 0) return true; // If the array is empty, consider rounds to be the same
 
+    console.log("array", array)
     // Take the round value of the first element as reference
     const referenceRound = array[0][key];
 

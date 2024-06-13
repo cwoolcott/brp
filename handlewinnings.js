@@ -1,4 +1,4 @@
-const {nameCards} = require("./utils");
+const {nameCards, areValuesInArraySame} = require("./utils");
 
 const singleCardValueMap = function (value) {
   const valueMap = {
@@ -119,7 +119,7 @@ const handleRemaining = function(game, whatsLeft, roundWinnings, startWith = 1){
     for (let i = startWith; i<game.bettingRoundPlayers.length; i++){
       console.log("game.bettingRoundPlayers[i].potContribution", " >= ", "game.bettingRoundPlayers[i - 1].potContribution")
       console.log(game.bettingRoundPlayers[i].potContribution, " >= ", game.bettingRoundPlayers[i - 1].potContribution)
-      if (game.bettingRoundPlayers[i].potContribution >= game.bettingRoundPlayers[i - 1].potContribution){
+      if (game.bettingRoundPlayers[i].potContribution >= game.bettingRoundPlayers[i - 1].potContribution && whatsLeft>0){
         //let whatsOwed = game.bettingRoundPlayers[i].potContribution - game.bettingRoundPlayers[i - 1].potContribution;
         //correct whats left if last player
         let whatsOwed = whatsLeft;
@@ -177,21 +177,28 @@ const handleWinnings = function (game) {
     let roundWinnings = 0;
     
   
-    // Check for players with the same best hand
+    // Check for players with the same BEST HAND
     if (
       game.bettingRoundPlayers.some(player => {
         return player.id !== game.bettingRoundPlayers[0].id &&
           JSON.stringify(player.cardStrength) === JSON.stringify(game.bettingRoundPlayers[0].cardStrength);
       })
     ) {
+      console.log("#1 Count players with same hand and all in amounts");
       //Count players with same hand and all in amounts
       let allInPlayers = [];
       let notAllInPlayers = [];
       let allInRemaining = 0;
       let highestAllIn = 0;
-    
-
+      let sameHand = 0;
+      
+  
       game.bettingRoundPlayers.forEach(player => {
+
+        if (JSON.stringify(player.cardStrength) === JSON.stringify(game.bettingRoundPlayers[0].cardStrength)){
+          sameHand++;
+        }
+
         if (player.allIn){
           allInPlayers.push(player);
           highestAllIn = player.allIn > highestAllIn ? player.allIn : highestAllIn;
@@ -202,84 +209,132 @@ const handleWinnings = function (game) {
         }
       });
 
-      if (allInPlayers.length>1){
-        
-        let allInTotal = game.pot >= highestAllIn ? highestAllIn : game.pot;
+      console.log("sameHand:", sameHand)
+      console.log(":", allInPlayers.length, )
 
-        allInPlayers = sortByKey(allInPlayers, "allIn");
-  
-        for (let player of allInPlayers)  {
-          if (allInRemaining === 1) {
-            console.log("playersPart_l", allInTotal)
-            
-            player.money += allInTotal;
-            roundWinnings += allInTotal;
-            break;
+      // all same hands, everyone gets contribution back
+      if (sameHand === game.bettingRoundPlayers.length ){
+        game.bettingRoundPlayers.forEach((player, i, array) => {
+          player.money += player.potContribution;
+          roundWinnings += player.potContribution;
+        });
+        //Remaining Money in Pot Distribute
+        if (game.pot>roundWinnings){
+          let remainingWinnings = game.pot - roundWinnings;
+          let remainingWinningPart = parseInt(remainingWinnings/game.bettingRoundPlayers.length)
+          let reminder = remainingWinnings % game.bettingRoundPlayers.length;
+
+          game.bettingRoundPlayers.forEach((player, i, array) => {
+            player.money += remainingWinningPart;
+            roundWinnings += remainingWinningPart;
+            if (i === array.length - 1){ 
+              player.money += reminder;
+            roundWinnings += reminder;
           }
-  
-          if ( player.allIn != highestAllIn){
-            console.log("player.allIn / allInRemaining", player.allIn, allInRemaining)
-            let playersPart = parseInt(player.allIn / allInRemaining);
-            console.log("playersPart", playersPart)
-            player.money += playersPart;
-            roundWinnings += playersPart;
-            allInTotal -= playersPart;
-            console.log("allInTotal", allInTotal)
-            allInRemaining--;
-          }
-          else{
-            let playersPart = parseInt(allInTotal / allInRemaining);
-            console.log("playersPart", playersPart)
-            player.money += playersPart;
-            roundWinnings += playersPart;
-            allInTotal -= playersPart;
-            console.log("allInTotal", allInTotal)
-            allInRemaining--;
-          }
-  
-        };
-        //try
-        if (game.bettingRoundPlayers.length>allInPlayers.length){
-          console.log("still some that aren't all in ")
-          console.log("game.bettingRoundPlayers", game.bettingRoundPlayers)
-         //, roundWinnings, (game.bettingRoundPlayers.length-allInPlayers.length)-1))
+          });
         }
-       
       }
+      //some other player(s) have same best hand
       else{
-  
-        //no allin players but same hand
-        const sameHandIndex = [];
-        game.bettingRoundPlayers.forEach((player, i) => {
-          if (JSON.stringify(player.cardStrength) === JSON.stringify(game.bettingRoundPlayers[0].cardStrength)){
-            sameHandIndex.push(i)
-          }
-        });
-
-        let whatsLeft = game.pot;
-
-        const dividePot = parseInt(game.pot/sameHandIndex.length);
-
-        let divideString = "Pot Divided Between ";
-        game.bettingRoundPlayers.forEach((player, i) => {
-          if (sameHandIndex.includes(i)){
-            //game.pot -= dividePot;
-            roundWinnings += dividePot;
-            whatsLeft -= dividePot
-            player.money += dividePot;
-            divideString += player.name + ", ";
-
-          }
-        });
-        console.log(divideString)
-
-        //handleOdd
-        if (whatsLeft>0){
-          game.bettingRoundPlayers[0].money += whatsLeft;
-          roundWinnings  += whatsLeft;
+        let totalPercent = 0;
+        let remainingPot = game.pot;
+        for (let i = 0; i<sameHand; i++){
+          const percentage = game.pot/game.bettingRoundPlayers[i].potContribution;
+          
+          const potPercent = (percentage * game.bettingRoundPlayers.length/100);
+          console.log("potPercent", potPercent)
+          totalPercent += potPercent
+          let amountEarned = potPercent * game.pot;
+          console.log("amountEarned", amountEarned)
+          game.bettingRoundPlayers[i].money += amountEarned
+          roundWinnings += amountEarned
+          remainingPot -= amountEarned;
         }
+        //should be next player if not all hands match
+        game.bettingRoundPlayers[sameHand].money += remainingPot;
+        roundWinnings += remainingPot
+        
 
       }
+      
+      // if (allInPlayers.length>1){
+        
+      //   let allInTotal = game.pot >= highestAllIn ? highestAllIn : game.pot;
+
+      //   allInPlayers = sortByKey(allInPlayers, "allIn");
+  
+      //   for (let player of allInPlayers)  {
+      //     if (allInRemaining === 1) {
+      //       console.log("playersPart_l", allInTotal)
+            
+      //       player.money += allInTotal;
+      //       roundWinnings += allInTotal;
+      //       break;
+      //     }
+  
+      //     if ( player.allIn != highestAllIn){
+      //       console.log("player.allIn / allInRemaining", player.allIn, allInRemaining)
+      //       let playersPart = parseInt(player.allIn / allInRemaining);
+      //       console.log("playersPart", playersPart)
+      //       player.money += playersPart;
+      //       roundWinnings += playersPart;
+      //       allInTotal -= playersPart;
+      //       console.log("allInTotal", allInTotal)
+      //       allInRemaining--;
+      //     }
+      //     else{
+      //       let playersPart = parseInt(allInTotal / allInRemaining);
+      //       console.log("playersPart", playersPart)
+      //       player.money += playersPart;
+      //       roundWinnings += playersPart;
+      //       allInTotal -= playersPart;
+      //       console.log("allInTotal", allInTotal)
+      //       allInRemaining--;
+      //     }
+  
+      //   };
+      //   //try
+      //   if (game.bettingRoundPlayers.length>allInPlayers.length){
+      //     console.log("still some that aren't all in ")
+      //     console.log("game.bettingRoundPlayers", game.bettingRoundPlayers)
+      //    //, roundWinnings, (game.bettingRoundPlayers.length-allInPlayers.length)-1))
+      //   }
+       
+      // }
+      // else{
+  
+      //   //no allin players but same hand
+      //   const sameHandIndex = [];
+      //   game.bettingRoundPlayers.forEach((player, i) => {
+      //     if (JSON.stringify(player.cardStrength) === JSON.stringify(game.bettingRoundPlayers[0].cardStrength)){
+      //       sameHandIndex.push(i)
+      //     }
+      //   });
+
+      //   let whatsLeft = game.pot;
+
+      //   const dividePot = parseInt(game.pot/sameHandIndex.length);
+
+      //   let divideString = "Pot Divided Between ";
+      //   game.bettingRoundPlayers.forEach((player, i) => {
+      //     if (sameHandIndex.includes(i)){
+      //       //game.pot -= dividePot;
+      //       roundWinnings += dividePot;
+      //       whatsLeft -= dividePot
+      //       player.money += dividePot;
+      //       divideString += player.name + ", ";
+
+      //     }
+      //   });
+      //   console.log(divideString)
+
+      //   //handleOdd
+      //   if (whatsLeft>0){
+      //     game.bettingRoundPlayers[0].money += whatsLeft;
+      //     roundWinnings  += whatsLeft;
+      //   }
+
+      // }
 
      
       
@@ -297,7 +352,7 @@ const handleWinnings = function (game) {
       !game.bettingRoundPlayers[0].allIn ||
       game.bettingRoundPlayers[0].allIn === game.pot
     ) {
-      //console.log("Best Hand No Side");
+      console.log("#2 Best Hand No Side");
   
       if (game.bettingRoundPlayers.length === 1 && game.bettingRoundPlayers[0].npc === true) {
         if (Math.random() < 0.6) {
@@ -324,34 +379,30 @@ const handleWinnings = function (game) {
       //first player is all in but more in the pot
     } else {
 
-      console.log("Game Pot:", game.pot)
-      const correctedAllIn =  game.bettingRoundPlayers[0].allIn;
-      // const correctedAllIn =  game.bettingRoundPlayers[0].allIn > game.pot ? game.pot : game.bettingRoundPlayers[0].allIn;
-      // console.log(game.bettingRoundPlayers[0].name + " gets " + correctedAllIn);
-      // game.bettingRoundPlayers[0].money += correctedAllIn;
-      // roundWinnings +=  correctedAllIn;
-      
+      console.log("#3 Game Pot:", game.pot)
+      //const correctedAllIn =  game.bettingRoundPlayers[0].allIn;
+      const correctedAllIn =  game.bettingRoundPlayers[0].allIn > game.pot ? game.pot : game.bettingRoundPlayers[0].allIn;
+      console.log("Corrected AllIn", game.bettingRoundPlayers[0].name + " gets " + correctedAllIn);
+      game.bettingRoundPlayers[0].money += correctedAllIn;
+      roundWinnings +=  correctedAllIn;
+
       let whatsLeft = game.pot - correctedAllIn;
     
       console.log("whats left", whatsLeft);
       ({game, roundWinnings} = handleRemaining(game, whatsLeft, roundWinnings))
 
-      
     }
 
     //Fix Math
     let totalPaidOut = 0;
     if (roundWinnings !== game.pot){
+      console.log("ISSUE AT roundWinnings !== game.pot")
       console.log("roundWinnings" ,"!==", "game.pot");
       console.log(roundWinnings ,"!==", game.pot);
 
-      console.log(game.bettingRoundPlayers)
-      // loop through and match POT
-      console.log("ISSUE AT roundWinnings !== game.pot")
-      //throw new Error("")
     }
-        
-
+    console.log("FInal:");
+    console.log(game.bettingRoundPlayers)
     
     //removal of player with no hands /
     for (let i = 0; i < game.bettingRoundPlayers.length; i++) {

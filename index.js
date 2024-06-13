@@ -8,6 +8,12 @@ const run = async () => {
     message: "What is your name?",
   });
 
+  let testAmount = 600;
+  let gameCount = 0;
+  while (testAmount === 600){
+    gameCount++;
+    console.info("************************** NEW GAME: " + gameCount + "**************************")
+
   let poker = pokerGame.startGame(human.name);
  
   while (poker.currentList.length > 1) {
@@ -31,7 +37,12 @@ const run = async () => {
 
    poker.currentList.forEach(player => {
       console.log("CL:  ", player.name, " $", player.money)
+      testAmount = player.money;
     });
+    
+
+  } //end while
+  console.info("************************** END GAME: " + gameCount + "**************************")
 };
 
 run();
