@@ -525,7 +525,14 @@ module.exports = {
               ? game.currentBet
               : playerTurn.currentBet;
               //300 - 200 + 100 TODO CHECK
-          playerTurn.allIn = (game.pot - game.currentBet + playerTurn.currentBet); //includes his bet
+          //playerTurn.allIn = (game.pot - game.currentBet + playerTurn.currentBet); //includes his bet
+          //playerTurn.allIn = (game.pot + (game.currentBet - howMuchCanBeCalled));
+          playerTurn.allIn = game.pot;
+          if (playerTurn.allIn>600){
+            console.log(":", game.pot, "+" ,game.currentBet, "-", howMuchCanBeCalled)
+            console.log("playerTurn.allIn ", playerTurn.allIn )
+            throw new Error("All in Wrong")
+          }
           playerTurn.allInRound = game.cardRound;
   
           //console.log("players allin pot $" + playerTurn.allIn, "Player CurrentBet:", playerTurn.allInBet, " with money: ", playerTurn.money, " existing post pot: ", game.pot);
@@ -547,30 +554,41 @@ module.exports = {
   
           if (playerTurn.money <= game.currentBet) {
             //console.log(playerTurn.name, " calls all-in ", "call: ", game.currentBet, " money: ", playerTurn.money, " pre pot: ", game.pot);
+            
+            // Find out how much player should be all in for
+            let allInTemp = game.pot;
+            for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
+              //This Player, and Players that haven't bet don't count
+              if (playerTurn === game.bettingRoundPlayers[j] || playerTurn.money>=game.bettingRoundPlayers[j].currentBet) continue;
+              // other player put in 100 but current has 4 = 96
+              let betDifference = game.bettingRoundPlayers[j].currentBet - playerTurn.money;
+              allInTemp =- betDifference;
+            }
+            
             console.log(
               playerTurn.name,
-              " calls all-in " +
+              " is all-in " +
                 "for $" +
-                game.currentBet +
+                allInTemp +
                 " with " +
                 playerTurn.money
             );
 
-
-
-
-            // 100 - 50 + 25 = 75
-            //let betDifference = game.currentBet - (playerTurn.currentBet + playerTurn.money);
-            let howMuchCanBeCalled = playerTurn.money;
-
             game.pot += playerTurn.money;
             playerTurn.potContribution += playerTurn.money;
             playerTurn.currentBet += playerTurn.money;
-
             playerTurn.allInBet = playerTurn.money;
             playerTurn.money = 0;
        
-            playerTurn.allIn = (game.pot + (game.currentBet - howMuchCanBeCalled));
+            //playerTurn.allIn = (game.pot + (game.currentBet - howMuchCanBeCalled));
+            //if last player called 100 and you only have 4, you don't get all of it, just what you have to contribute
+            playerTurn.allIn = allInTemp;
+            if (playerTurn.allIn<0 || playerTurn.allIn>600){
+              console.log(":", game.pot, "+" ,game.currentBet, "-", allInTemp)
+              console.log("playerTurn.allIn ", playerTurn.allIn )
+              throw new Error("All in Wrong")
+            }
+            
             playerTurn.allInRound = game.cardRound;
 
             game.currentBet =
@@ -683,6 +701,7 @@ module.exports = {
       game.firstRound = true;
       game.currentBet = 0;
       game.bettingRoundRaises = 0;
+      
       game.bettingRoundPlayers.forEach((player) => {
         player.currentBet = 0;
         player.lastBetRound = 0;
@@ -897,6 +916,7 @@ module.exports = {
       }
 
       //700 600
+      
       console.log("Math FIX:", fixMathTotal, game.gameTotal)
       if (fixMathTotal != game.gameTotal){
 
