@@ -559,10 +559,13 @@ module.exports = {
             let allInTemp = game.pot;
             for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
               //This Player, and Players that haven't bet don't count
-              if (playerTurn === game.bettingRoundPlayers[j] || playerTurn.money>=game.bettingRoundPlayers[j].currentBet) continue;
+              if (playerTurn === game.bettingRoundPlayers[j] || playerTurn.money>=game.bettingRoundPlayers[j].currentBet || game.bettingRoundPlayers[j].lastBetRound !== playerTurn.lastBetRound) continue;
               // other player put in 100 but current has 4 = 96
+              console.log("cb - money", game.bettingRoundPlayers[j].currentBet ,"-", playerTurn.money)
+             
               let betDifference = game.bettingRoundPlayers[j].currentBet - playerTurn.money;
-              allInTemp =- betDifference;
+              console.log("allintemp - bd", allInTemp,"=-", betDifference)
+              allInTemp -= betDifference;
             }
             
             console.log(
