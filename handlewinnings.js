@@ -112,61 +112,61 @@ else if (cardStrength[0] === "Full House") {
   return `${showCards} making ${result}`;
 };
 
-const handleRemaining = function(game, whatsLeft, roundWinnings, startWith = 1){
-  whatsLeft = whatsLeft < 0 ? 0 : whatsLeft; //current underbet
+// const handleRemaining = function(game, whatsLeft, roundWinnings, startWith = 1){
+//   whatsLeft = whatsLeft < 0 ? 0 : whatsLeft; //current underbet
 
-  if (whatsLeft > 0){
-    for (let i = startWith; i<game.bettingRoundPlayers.length; i++){
-      console.log("game.bettingRoundPlayers[i].potContribution", " >= ", "game.bettingRoundPlayers[i - 1].potContribution")
-      console.log(game.bettingRoundPlayers[i].potContribution, " >= ", game.bettingRoundPlayers[i - 1].potContribution)
-      if (game.bettingRoundPlayers[i].potContribution >= game.bettingRoundPlayers[i - 1].potContribution && whatsLeft>0){
-        //let whatsOwed = game.bettingRoundPlayers[i].potContribution - game.bettingRoundPlayers[i - 1].potContribution;
-        //correct whats left if last player
-        let whatsOwed = whatsLeft;
-        let isLastPlayer = i === game.bettingRoundPlayers.length-1;
-        // if (isLastPlayer) {
-        //   console.log("last player")
-        //   whatsLeft = game.bettingRoundPlayers[i].potContribution
-        // }
-        console.log(game.bettingRoundPlayers[i].name, " is owed ", whatsLeft, " from remaining players")
-        //200
-        //lets find out who owns them money, including themselves
-       if (isLastPlayer){
-        game.bettingRoundPlayers[i].money += whatsOwed;
-            roundWinnings +=  whatsOwed;
-            whatsLeft -= whatsOwed;
-       }
-       else{
-        for (let j = i; j<game.bettingRoundPlayers.length; j++){
-          if (whatsLeft > 0){
-            console.log("whatsLeft", whatsLeft)
-            if (game.bettingRoundPlayers[j].potContribution < whatsLeft){
-              whatsOwed = game.bettingRoundPlayers[j].potContribution 
-              console.log("whatsOwed UpdatedL", whatsOwed)
-            }
-            // else if(isLastPlayer){
-            //   whatsOwed = game.bettingRoundPlayers[game.bettingRoundPlayers.length-1].potContribution 
-            // }
+//   if (whatsLeft > 0){
+//     for (let i = startWith; i<game.bettingRoundPlayers.length; i++){
+//       console.log("game.bettingRoundPlayers[i].potContribution", " >= ", "game.bettingRoundPlayers[i - 1].potContribution")
+//       console.log(game.bettingRoundPlayers[i].potContribution, " >= ", game.bettingRoundPlayers[i - 1].potContribution)
+//       if (game.bettingRoundPlayers[i].potContribution >= game.bettingRoundPlayers[i - 1].potContribution && whatsLeft>0){
+//         //let whatsOwed = game.bettingRoundPlayers[i].potContribution - game.bettingRoundPlayers[i - 1].potContribution;
+//         //correct whats left if last player
+//         let whatsOwed = whatsLeft;
+//         let isLastPlayer = i === game.bettingRoundPlayers.length-1;
+//         // if (isLastPlayer) {
+//         //   console.log("last player")
+//         //   whatsLeft = game.bettingRoundPlayers[i].potContribution
+//         // }
+//         console.log(game.bettingRoundPlayers[i].name, " is owed ", whatsLeft, " from remaining players")
+//         //200
+//         //lets find out who owns them money, including themselves
+//        if (isLastPlayer){
+//         game.bettingRoundPlayers[i].money += whatsOwed;
+//             roundWinnings +=  whatsOwed;
+//             whatsLeft -= whatsOwed;
+//        }
+//        else{
+//         for (let j = i; j<game.bettingRoundPlayers.length; j++){
+//           if (whatsLeft > 0){
+//             console.log("whatsLeft", whatsLeft)
+//             if (game.bettingRoundPlayers[j].potContribution < whatsLeft){
+//               whatsOwed = game.bettingRoundPlayers[j].potContribution 
+//               console.log("whatsOwed UpdatedL", whatsOwed)
+//             }
+//             // else if(isLastPlayer){
+//             //   whatsOwed = game.bettingRoundPlayers[game.bettingRoundPlayers.length-1].potContribution 
+//             // }
 
-            console.log(game.bettingRoundPlayers[j].name, " gives ",game.bettingRoundPlayers[i].name, " $", whatsOwed)
-            game.bettingRoundPlayers[i].money += whatsOwed;
-            roundWinnings +=  whatsOwed;
-            whatsLeft -= whatsOwed;
-          }
-          else{
-            console.log("Nothing Left", whatsLeft)
-          }
+//             console.log(game.bettingRoundPlayers[j].name, " gives ",game.bettingRoundPlayers[i].name, " $", whatsOwed)
+//             game.bettingRoundPlayers[i].money += whatsOwed;
+//             roundWinnings +=  whatsOwed;
+//             whatsLeft -= whatsOwed;
+//           }
+//           else{
+//             console.log("Nothing Left", whatsLeft)
+//           }
           
-        }
-       }
+//         }
+//        }
         
         
-      }
-    }
+//       }
+//     }
   
-  }
-  return {game, roundWinnings};
-};
+//   }
+//   return {game, roundWinnings};
+// };
 
 const handleWinnings = function (game) {
     const allInPlayers = game.bettingRoundPlayers.filter(player => player.allIn);
@@ -389,7 +389,8 @@ const handleWinnings = function (game) {
       let whatsLeft = game.pot - correctedAllIn;
     
       console.log("whats left", whatsLeft);
-      ({game, roundWinnings} = handleRemaining(game, whatsLeft, roundWinnings))
+      game.bettingRoundPlayers[1].money += whatsLeft
+      roundWinnings +=  whatsLeft;
 
     }
 

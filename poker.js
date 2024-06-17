@@ -636,9 +636,20 @@ module.exports = {
           if (game.currentPosition !== j) {
               //Apply Current Bet to others
 
+              let fixOtherContribution = game.bettingRoundPlayers[j].currentBet;
+              if (game.bettingRoundPlayers[j].position === 0 && game.cardDeal === 0){
+                //small blind in already
+                fixOtherContribution -= game.smallBlind;
+              }
+              else if (game.bettingRoundPlayers[j].position === 1 && game.cardDeal === 0){
+                 //big blind in already
+                 fixOtherContribution -= game.bigBlind;
+              }
+              //game.bettingRoundPlayers[j].currentBet
+
             const addToOthersAllInBet = playerTurn.allInBet < game.bettingRoundPlayers[j].currentBet
               ? playerTurn.allInBet
-              : game.bettingRoundPlayers[j].currentBet;
+              : fixOtherContribution;
          
 
             console.log(game.bettingRoundPlayers[j].name, " add ", addToOthersAllInBet, " to ", game.bettingRoundPlayers[j].allIn, "?");
