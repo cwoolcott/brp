@@ -35,7 +35,7 @@ const run = async () => {
 
    poker.currentList.forEach(player => {
       console.log("CL:  ", player.name, " $", player.money)
-      testAmount = player.money;
+     // testAmount = player.money;
     });
     
 

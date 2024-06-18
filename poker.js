@@ -63,14 +63,8 @@ module.exports = {
     },
     startingMoney: function (currentList) {
       currentList.forEach((player) => {
-        //TEST
-        if (!player.npc){
-          player.money = STARTING_MONEY * 10;
-        }
-        else{
-          player.money = STARTING_MONEY;
-        }
-        
+
+        player.money = STARTING_MONEY;        
         player.allIn = false;
       });
       return currentList;
@@ -116,7 +110,7 @@ module.exports = {
             console.log(currentList[i].name + " is out. ");
             //TEST
             if (!currentList[i].npc){
-              throw new Error("TEST")
+              throw new Error("Player Out")
             }
             currentList.splice(i, 1);
             i--;
@@ -589,11 +583,11 @@ module.exports = {
             //playerTurn.allIn = (game.pot + (game.currentBet - howMuchCanBeCalled));
             //if last player called 100 and you only have 4, you don't get all of it, just what you have to contribute
             playerTurn.allIn = allInTemp;
-            if (playerTurn.allIn<0 || playerTurn.allIn>600){
-              console.log(":", game.pot, "+" ,game.currentBet, "-", allInTemp)
-              console.log("playerTurn.allIn ", playerTurn.allIn )
-              throw new Error("All in Wrong")
-            }
+            // if (playerTurn.allIn<0 || playerTurn.allIn>NUM_OF_PLAYERS * 200){
+            //   console.log(":", game.pot, "+" ,game.currentBet, "-", allInTemp)
+            //   console.log("playerTurn.allIn ", playerTurn.allIn )
+            //   throw new Error("All in Wrong")
+            // }
             
             playerTurn.allInRound = game.cardRound;
 
@@ -690,11 +684,11 @@ module.exports = {
       console.log("-After this Round-")
       console.log("Game Pot: ", game.pot)
       for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
-        if (game.bettingRoundPlayers[j].allIn>600){
-          console.log(":", game.pot, "+" ,game.currentBet)
-          console.log("playerTurn.allIn ", game.bettingRoundPlayers[j].allIn )
-          throw new Error("All in Wrong")
-        }
+        // if (game.bettingRoundPlayers[j].allIn>NUM_OF_PLAYERS * 200){
+        //   console.log(":", game.pot, "+" ,game.currentBet)
+        //   console.log("playerTurn.allIn ", game.bettingRoundPlayers[j].allIn )
+        //   throw new Error("All in Wrong")
+        // }
         
         console.log("LBR:", game.bettingRoundPlayers[j].lastBetRound, " ", game.bettingRoundPlayers[j].name, 
         ": CB $", game.bettingRoundPlayers[j].currentBet, " AllIn:", game.bettingRoundPlayers[j].allIn,
@@ -714,11 +708,11 @@ module.exports = {
         );
       }
   
-      console.log("highestBettingAmount", highestBettingAmount);
+      // console.log("highestBettingAmount", highestBettingAmount);
   
       for (let i = 0; i < game.bettingRoundPlayers.length; i++) {
-        console.log("game.bettingRoundPlayers[i].currentBet !== highestBettingAmount", game.bettingRoundPlayers[i].currentBet !== highestBettingAmount)
-        console.log("!game.bettingRoundPlayers[i].allIn", !game.bettingRoundPlayers[i].allIn)
+        // console.log("game.bettingRoundPlayers[i].currentBet !== highestBettingAmount", game.bettingRoundPlayers[i].currentBet !== highestBettingAmount)
+        // console.log("!game.bettingRoundPlayers[i].allIn", !game.bettingRoundPlayers[i].allIn)
         if (
           game.bettingRoundPlayers[i].currentBet !== highestBettingAmount &&
           !game.bettingRoundPlayers[i].allIn
