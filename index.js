@@ -10,16 +10,14 @@ const run = async () => {
 
   let testAmount = 600;
   let gameCount = 0;
-  while (testAmount === 600){
+  while (testAmount === 600 && gameCount < 200){
     gameCount++;
     console.info("************************** NEW GAME: " + gameCount + "**************************")
 
   let poker = pokerGame.startGame(human.name);
  
   while (poker.currentList.length > 1) {
-    if (poker.game.round>20){
-      throw new Error("too many rounds.")
-    }
+
     console.info("************************** IN GAME: " + gameCount + "**************************")
     console.log("ROUND " + poker.game.round + " Begins.");
 
