@@ -208,7 +208,7 @@ module.exports = {
       } else {
         game.bettingRoundPlayers[smbPos].money -= game.smallBlind;
         game.bettingRoundPlayers[smbPos].currentBet = game.smallBlind;
-        game.bettingRoundPlayers[smbPos].potContribution =game.smallBlind;
+        game.bettingRoundPlayers[smbPos].potContribution = game.smallBlind;
         game.pot += game.smallBlind;
         console.log(
           "Small Blind Posted by " +
@@ -375,16 +375,22 @@ module.exports = {
    
     bettingRound: async function (game) {
       //console.log("-------");
-      //console.log("BETTING ROUND:", game.round , "  game.currentPosition:", game.currentPosition, " of ", game.bettingRoundPlayers.length - 1);
+      console.log("BETTING ROUND:", game.round , "  game.currentPosition:", game.currentPosition, " of ", game.bettingRoundPlayers.length - 1);
   
-      //console.log("current bet pre-player:", game.currentBet);
+      console.log("current bet pre-player:", game.currentBet);
   
       let playerTurn = game.bettingRoundPlayers[game.currentPosition];
       let raiseOption = true;
+      let playerAction;
+      let currentAction = false;
+
       console.log("------ ROUND START -------")
       console.log(playerTurn.name, " Last Bet Round", playerTurn.lastBetRound, " He is ", playerTurn.allIn ? "All In" : "Not All In");
       console.log("Other Players: ",  game.bettingRoundPlayers.filter(player => !player.allIn && player.name !== playerTurn.name).length>0 ? "are not ALL all-In" : "are All all-in")
   
+      if (isNaN(playerTurn.money) ){
+        throw new Error("isNaN")
+      }
       // console.log("-Pre  Round-")
       //   console.log("Game Pot: ", game.pot)
       // for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
@@ -444,7 +450,6 @@ module.exports = {
         raises
       );
       let playerFolded = false;
-      let playerAction = false;
       let playerRaise = false;
       if (playerTurn.npc === false) {
         let playOptions;
@@ -507,6 +512,7 @@ module.exports = {
         playerAction === "raise" ||
         (!playerAction && (raiseOption && decisionValue > 20))
       ) {
+        currentAction = "raise";
         //20
         //console.log("% Raise %", decisionValue, "---");
         game.bettingRoundRaises++;
@@ -545,6 +551,7 @@ module.exports = {
         playerAction === "call" ||
         (!playerAction && decisionValue > 10)
       ) {
+        currentAction = "call";
         if (playerTurn.currentBet < game.currentBet) {
           // console.log("% Calls % ", game.currentBet);
   
@@ -608,10 +615,12 @@ module.exports = {
             game.currentBet = playerTurn.currentBet;
           }
         } else {
+          currentAction = "check";
           console.log(playerTurn.name + " Player checks.");
         }
       } else {
         //console.log("% Fold % CB:", playerTurn.currentBet, " GB", game.currentBet);
+        currentAction = "fold";
         console.log(playerTurn.name, " folds");
         game.bettingRoundPlayers.splice(game.currentPosition, 1);
         //issue with folding player skipping next person
@@ -624,15 +633,16 @@ module.exports = {
   
       //   console.log("current bet post-player:", game.currentBet);
       //   console.log("-------");
-  
+      console.log("playerTurn.lastBetRound:", playerTurn.lastBetRound)
       //CHeck that allIn Players bets are matched ???
-      //console.log("Other Players - Adjust All In CardRound: ", this.cardDeal[game.cardRound], " ", game.cardRound)
-      if (!playerFolded && playerTurn.currentBet > 0) {
+      console.log("Other Players - Adjust All In CardRound: ", this.cardDeal[game.cardRound], " ", game.cardRound)
+      console.log("currentAction:", currentAction)
+      if ((currentAction ==="call" || currentAction ==="raise") && !playerFolded && playerTurn.currentBet > 0) {
         for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
           if (!game.bettingRoundPlayers[j].allIn) continue;
           if (game.currentPosition !== j) {
               //Apply Current Bet to others
-
+              console.log("game.bettingRoundPlayers[j].lastBetRound:", game.bettingRoundPlayers[j].lastBetRound)
               let fixOtherContribution = game.bettingRoundPlayers[j].currentBet;
               if (game.bettingRoundPlayers[j].position === 0 && game.cardDeal === 0){
                 //small blind in already
@@ -704,9 +714,11 @@ module.exports = {
         );
       }
   
-      //console.log("highestBettingAmount", highestBettingAmount);
+      console.log("highestBettingAmount", highestBettingAmount);
   
       for (let i = 0; i < game.bettingRoundPlayers.length; i++) {
+        console.log("game.bettingRoundPlayers[i].currentBet !== highestBettingAmount", game.bettingRoundPlayers[i].currentBet !== highestBettingAmount)
+        console.log("!game.bettingRoundPlayers[i].allIn", !game.bettingRoundPlayers[i].allIn)
         if (
           game.bettingRoundPlayers[i].currentBet !== highestBettingAmount &&
           !game.bettingRoundPlayers[i].allIn
@@ -725,6 +737,7 @@ module.exports = {
       
       game.bettingRoundPlayers.forEach((player) => {
         player.currentBet = 0;
+        player.potContribution = 0;
         player.lastBetRound = 0;
       });
       return game;
@@ -895,6 +908,9 @@ module.exports = {
           (game.firstRound === true ||
             !this.isEqualBettingAmount(game))
         ) {
+
+          console.log("^^^WHILE",   game.bettingRoundPlayers.length > 1, game.firstRound, "|| Not Equal Amounts:", 
+              !this.isEqualBettingAmount(game));
           
 
           game = await this.bettingRound(game);
@@ -945,12 +961,12 @@ module.exports = {
         let breakDown = parseInt(mathDifference/game.bettingRoundPlayers.length);
         let remaining = breakDown % game.bettingRoundPlayers.length;
         console.log("remaining:", remaining, "MD:", mathDifference, "BD:", breakDown)
-        console.log("**** Game:", game.round, "****");
-        throw new Error("ISSUE");
+        
         for (let i = 0; i <  game.bettingRoundPlayers.length; i++){
-          game.bettingRoundPlayers[i].money += breakDown
+          console.log(game.bettingRoundPlayers[i].name)
+          console.log(game.bettingRoundPlayers[i].money)
         }
-        game.bettingRoundPlayers[0].money += remaining;
+       // game.bettingRoundPlayers[0].money += remaining;
         
       }
    

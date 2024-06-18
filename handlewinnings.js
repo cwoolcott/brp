@@ -183,11 +183,22 @@ const handleWinnings = function (game) {
         let totalPercent = 0;
         let remainingPot = game.pot;
         for (let i = 0; i<sameHand; i++){
-          const percentage = game.pot/game.bettingRoundPlayers[i].potContribution;
-          
-          const potPercent = (percentage * game.bettingRoundPlayers.length/100);
-          console.log("potPercent", potPercent)
+          let potPercent;
+        
+          if (parseInt(game.bettingRoundPlayers[i].potContribution) !== 0){
+            console.log(" game.bettingRoundPlayers[i].potContribution)",  game.bettingRoundPlayers[i].potContribution);
+            const percentage = game.pot/game.bettingRoundPlayers[i].potContribution;
+            console.log("game.pot/game.bettingRoundPlayers[i].potContribution", game.pot, "/", game.bettingRoundPlayers[i].potContribution)
+            console.log("percentage", percentage)
+             potPercent = (percentage * game.bettingRoundPlayers.length/100);
+            console.log("potPercent", potPercent)
+            
+          }
+          else{
+            potPercent = 0;
+          }
           totalPercent += potPercent
+          
           let amountEarned = parseInt(potPercent * game.pot);
           console.log("amountEarned", amountEarned)
           game.bettingRoundPlayers[i].money += amountEarned
