@@ -528,11 +528,7 @@ module.exports = {
           //playerTurn.allIn = (game.pot - game.currentBet + playerTurn.currentBet); //includes his bet
           //playerTurn.allIn = (game.pot + (game.currentBet - howMuchCanBeCalled));
           playerTurn.allIn = game.pot;
-          if (playerTurn.allIn>600){
-            console.log(":", game.pot, "+" ,game.currentBet, "-", howMuchCanBeCalled)
-            console.log("playerTurn.allIn ", playerTurn.allIn )
-            throw new Error("All in Wrong")
-          }
+     
           playerTurn.allInRound = game.cardRound;
   
           //console.log("players allin pot $" + playerTurn.allIn, "Player CurrentBet:", playerTurn.allInBet, " with money: ", playerTurn.money, " existing post pot: ", game.pot);
@@ -622,7 +618,8 @@ module.exports = {
         game.currentPosition--;
         playerFolded = true;
       }
-  
+
+   
       playerTurn.lastBetRound = game.cardRound;
   
       //   console.log("current bet post-player:", game.currentBet);
@@ -667,18 +664,28 @@ module.exports = {
                 game.bettingRoundPlayers[j].allIn + addToOthersAllInBet;
                 console.log("Now All In for " + game.bettingRoundPlayers[j].allIn);
             }
+          
           }
         }
       }
-  
+ 
       //set betting player back to playerTurn
       if (!playerFolded) {
         game.bettingRoundPlayers[game.currentPosition] = playerTurn;
       }
+
   
-     console.log("-After this Round-")
-        console.log("Game Pot: ", game.pot)
+  
+  
+      console.log("-After this Round-")
+      console.log("Game Pot: ", game.pot)
       for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
+        if (game.bettingRoundPlayers[j].allIn>600){
+          console.log(":", game.pot, "+" ,game.currentBet)
+          console.log("playerTurn.allIn ", game.bettingRoundPlayers[j].allIn )
+          throw new Error("All in Wrong")
+        }
+        
         console.log("LBR:", game.bettingRoundPlayers[j].lastBetRound, " ", game.bettingRoundPlayers[j].name, 
         ": CB $", game.bettingRoundPlayers[j].currentBet, " AllIn:", game.bettingRoundPlayers[j].allIn,
         " potContribution:", game.bettingRoundPlayers[j].potContribution, "money:", game.bettingRoundPlayers[j].money

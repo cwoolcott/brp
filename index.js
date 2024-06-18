@@ -17,10 +17,10 @@ const run = async () => {
   let poker = pokerGame.startGame(human.name);
  
   while (poker.currentList.length > 1) {
-    if (poker.game.round>50){
+    if (poker.game.round>20){
       throw new Error("too many rounds.")
     }
-
+    console.info("************************** IN GAME: " + gameCount + "**************************")
     console.log("ROUND " + poker.game.round + " Begins.");
 
     poker = await pokerGame.playRound(poker.game, poker.currentList);
