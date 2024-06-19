@@ -128,7 +128,7 @@ const handleWinnings = function (game) {
           JSON.stringify(player.cardStrength) === JSON.stringify(game.bettingRoundPlayers[0].cardStrength);
       })
     ) {
-      console.log("#1 Count players with same hand and all in amounts");
+      // console.log("#1 Count players with same hand and all in amounts");
       //Count players with same hand and all in amounts
       let allInPlayers = [];
       let notAllInPlayers = [];
@@ -153,8 +153,8 @@ const handleWinnings = function (game) {
         }
       });
 
-      console.log("sameHand:", sameHand)
-      console.log(":", allInPlayers.length, )
+      // console.log("sameHand:", sameHand)
+      // console.log(":", allInPlayers.length, )
 
       // all same hands, everyone gets contribution back
       if (sameHand === game.bettingRoundPlayers.length ){
@@ -186,12 +186,12 @@ const handleWinnings = function (game) {
           let potPercent;
         
           if (parseInt(game.bettingRoundPlayers[i].potContribution) !== 0){
-            console.log(" game.bettingRoundPlayers[i].potContribution)",  game.bettingRoundPlayers[i].potContribution);
+            //console.log(" game.bettingRoundPlayers[i].potContribution)",  game.bettingRoundPlayers[i].potContribution);
             const percentage = game.pot/game.bettingRoundPlayers[i].potContribution;
-            console.log("game.pot/game.bettingRoundPlayers[i].potContribution", game.pot, "/", game.bettingRoundPlayers[i].potContribution)
-            console.log("percentage", percentage)
+           // console.log("game.pot/game.bettingRoundPlayers[i].potContribution", game.pot, "/", game.bettingRoundPlayers[i].potContribution)
+           // console.log("percentage", percentage)
              potPercent = (percentage * game.bettingRoundPlayers.length/100);
-            console.log("potPercent", potPercent)
+           // console.log("potPercent", potPercent)
             
           }
           else{
@@ -200,7 +200,7 @@ const handleWinnings = function (game) {
           totalPercent += potPercent
           
           let amountEarned = parseInt(potPercent * game.pot);
-          console.log("amountEarned", amountEarned)
+          // console.log("amountEarned", amountEarned)
           game.bettingRoundPlayers[i].money += amountEarned
           roundWinnings += amountEarned
           remainingPot -= amountEarned;
@@ -219,7 +219,7 @@ const handleWinnings = function (game) {
       !game.bettingRoundPlayers[0].allIn ||
       game.bettingRoundPlayers[0].allIn === game.pot
     ) {
-      console.log("#2 Best Hand No Side");
+      // console.log("#2 Best Hand No Side");
   
       if (game.bettingRoundPlayers.length === 1 && game.bettingRoundPlayers[0].npc === true) {
         if (Math.random() < 0.6) {
@@ -246,16 +246,16 @@ const handleWinnings = function (game) {
       //first player is all in but more in the pot
     } else {
 
-      console.log("#3 Game Pot:", game.pot)
+      // console.log("#3 Game Pot:", game.pot)
       //const correctedAllIn =  game.bettingRoundPlayers[0].allIn;
       const correctedAllIn =  game.bettingRoundPlayers[0].allIn > game.pot ? game.pot : game.bettingRoundPlayers[0].allIn;
-      console.log("Corrected AllIn", game.bettingRoundPlayers[0].name + " gets " + correctedAllIn);
+     // console.log("Corrected AllIn", game.bettingRoundPlayers[0].name + " gets " + correctedAllIn);
       game.bettingRoundPlayers[0].money += correctedAllIn;
       roundWinnings +=  correctedAllIn;
 
       let whatsLeft = parseInt(game.pot - correctedAllIn);
     
-      console.log("whats left", whatsLeft);
+     // console.log("whats left", whatsLeft);
       game.bettingRoundPlayers[1].money += whatsLeft
       roundWinnings +=  whatsLeft;
 
@@ -264,13 +264,13 @@ const handleWinnings = function (game) {
     //Fix Math
     let totalPaidOut = 0;
     if (roundWinnings !== game.pot){
-      console.log("ISSUE AT roundWinnings !== game.pot")
+      //console.log("ISSUE AT roundWinnings !== game.pot")
       console.log("roundWinnings" ,"!==", "game.pot");
       console.log(roundWinnings ,"!==", game.pot);
 
     }
-    console.log("FInal:");
-    console.log(game.bettingRoundPlayers)
+    // console.log("FInal:");
+    // console.log(game.bettingRoundPlayers)
     
     //removal of player with no hands /
     for (let i = 0; i < game.bettingRoundPlayers.length; i++) {

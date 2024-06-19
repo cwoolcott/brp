@@ -18,8 +18,8 @@ const run = async () => {
  
   while (poker.currentList.length > 1) {
 
-    console.info("************************** IN GAME: " + gameCount + "**************************")
-    console.log("ROUND " + poker.game.round + " Begins.");
+    // console.info("************************** IN GAME: " + gameCount + "**************************")
+    // console.log("ROUND " + poker.game.round + " Begins.");
 
     poker = await pokerGame.playRound(poker.game, poker.currentList);
    
@@ -29,18 +29,18 @@ const run = async () => {
   console.log("Game Winner: ", poker.game.bettingRoundPlayers[0].name, "In ", poker.game.round, "Rounds");
   console.log("--------------------------------------------------")
 
-  poker.game.bettingRoundPlayers.forEach(player => {
-      console.log("BPR: ", player.name, " $", player.money)
-    });
+  // poker.game.bettingRoundPlayers.forEach(player => {
+  //     console.log("BPR: ", player.name, " $", player.money)
+  //   });
 
-   poker.currentList.forEach(player => {
-      console.log("CL:  ", player.name, " $", player.money)
-     // testAmount = player.money;
-    });
+  //  poker.currentList.forEach(player => {
+  //     console.log("CL:  ", player.name, " $", player.money)
+  //    // testAmount = player.money;
+  //   });
     
 
   } //end while
-  console.info("************************** END GAME: " + gameCount + "**************************")
+ // console.info("************************** END GAME: " + gameCount + "**************************")
 };
 
 run();
