@@ -8,6 +8,12 @@ const utils = {
     });
     return uuid;
   },
+  replaceMaxNum(currentNum, newNum){
+    if (currentNum>newNum){
+      return currentNum;
+    }
+    return newNum;
+  },
   areValuesInArraySame(array, key) {
     if (array.length === 0) return true; // If the array is empty, consider rounds to be the same
 

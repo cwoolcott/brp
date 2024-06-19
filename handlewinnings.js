@@ -256,8 +256,17 @@ const handleWinnings = function (game) {
       let whatsLeft = parseInt(game.pot - correctedAllIn);
     
      // console.log("whats left", whatsLeft);
-      game.bettingRoundPlayers[1].money += whatsLeft
+     if (whatsLeft>0){
+      if (!game.bettingRoundPlayers[1]){
+        game.bettingRoundPlayers[0].money += whatsLeft
+      }
+      else{
+        game.bettingRoundPlayers[1].money += whatsLeft  
+      }
       roundWinnings +=  whatsLeft;
+      
+     }
+     
 
     }
 

@@ -149,7 +149,7 @@ function analyzeHand(cards) {
             result.push("Four of a Kind");
             result.push(8); // Value for Four of a Kind
             result.push(cards.find(card => valueCounts[card.code[0]] === 4).code[0]); // Value of the four cards
-            result.push(cards.find(card => valueCounts[card.code[0]] === 1).code[0]); // Next highest card value
+            //result.push(cards.find(card => valueCounts[card.code[0]] === 1).code[0]); // Next highest card value
         } else if (counts.includes(3) && counts.includes(2)) {
             result.push("Full House");
             result.push(7); // Value for Full House

@@ -10,7 +10,7 @@ const analyzeHand = require("./analyzehand");
 const npcPlayers = require("./npcplayers");
 const deck = require("./deck");
 const handleWinnings = require("./handlewinnings");
-const {generateUUID, nameCards, areValuesInArraySame} = require("./utils");
+const {replaceMaxNum, generateUUID, nameCards, areValuesInArraySame} = require("./utils");
 const inquirer = require("inquirer");
 
   
@@ -95,6 +95,7 @@ module.exports = {
           bettingRoundRaises: 0,
           bettingRoundPlayers: [...currentList],
           currentPosition: 0,
+          temp_check_total:0,
           gameTotal: currentList.length * STARTING_MONEY,
           bigBlind: 50,
           smallBlind: 25,
@@ -120,6 +121,7 @@ module.exports = {
         game = {
           round: game.round + 1,
           bettingRoundRaises: 0,
+          temp_check_total:0,
           bettingRoundPlayers: this.assignPositions([...currentList]),
           gameTotal: game.gameTotal,
           currentPosition: 0,
@@ -190,7 +192,7 @@ module.exports = {
         game.bettingRoundPlayers[smbPos].allInBet =
         game.bettingRoundPlayers[smbPos].currentBet;
         game.bettingRoundPlayers[smbPos].money = 0;
-        
+        game.currentBet = replaceMaxNum(game.currentBet, game.bettingRoundPlayers[smbPos].currentBet);
         //console.log("--- SMALL BLIND:", game.smallBlind, "MONEY:" . currentList[smbPos].money, " POST Game Pot: ", game.pot)
         console.log(
           "Small Blind Posted by " +
@@ -204,6 +206,8 @@ module.exports = {
         game.bettingRoundPlayers[smbPos].currentBet = game.smallBlind;
         game.bettingRoundPlayers[smbPos].potContribution = game.smallBlind;
         game.pot += game.smallBlind;
+ 
+        game.currentBet = replaceMaxNum(game.currentBet, game.smallBlind);
         console.log(
           "Small Blind Posted by " +
             game.bettingRoundPlayers[smbPos].name +
@@ -215,7 +219,7 @@ module.exports = {
       if (game.bigBlind >= game.bettingRoundPlayers[smbPos + 1].money) {
         //console.log("--- " , currentList[smbPos + 1].name , " game.bigBlind > currentList[smbPos + 1].money BIG BLIND:", game.bigBlind, "MONEY:" . currentList[smbPos + 1].money, " Pre Game Pot: ", game.pot)
         game.pot += game.bettingRoundPlayers[smbPos + 1].money;
-        game.currentBet = game.bettingRoundPlayers[smbPos + 1].money;
+        game.currentBet = replaceMaxNum(game.currentBet, game.bettingRoundPlayers[smbPos + 1].money);
         game.bettingRoundPlayers[smbPos + 1].potContribution = game.bettingRoundPlayers[smbPos + 1].money;
         game.bettingRoundPlayers[smbPos + 1].currentBet = game.bettingRoundPlayers[smbPos + 1].money;
         game.bettingRoundPlayers[smbPos + 1].allIn = game.pot;
@@ -233,7 +237,7 @@ module.exports = {
         );
       } else {
         game.bettingRoundPlayers[smbPos + 1].money -= game.bigBlind;
-        game.currentBet = game.bigBlind;
+        game.currentBet = replaceMaxNum(game.currentBet, game.bigBlind);
         
         game.bettingRoundPlayers[smbPos + 1].potContribution = game.bigBlind;
         game.pot += game.bigBlind;
@@ -520,10 +524,12 @@ module.exports = {
           playerTurn.allInBet = playerTurn.money;
           playerTurn.money = 0;
   
-          game.currentBet =
-            playerTurn.currentBet < game.currentBet
-              ? game.currentBet
-              : playerTurn.currentBet;
+          game.currentBet = replaceMaxNum(game.currentBet, playerTurn.currentBet);
+
+          // game.currentBet =
+          //   playerTurn.currentBet < game.currentBet
+          //     ? game.currentBet
+          //     : playerTurn.currentBet;
               //300 - 200 + 100 TODO CHECK
           //playerTurn.allIn = (game.pot - game.currentBet + playerTurn.currentBet); //includes his bet
           //playerTurn.allIn = (game.pot + (game.currentBet - howMuchCanBeCalled));
@@ -540,6 +546,7 @@ module.exports = {
           playerTurn.money -= betDifference;
           game.pot += betDifference;
           game.currentBet = doubleRaise;
+          game.currentBet = replaceMaxNum(game.currentBet, doubleRaise);
         }
       } else if (
         playerAction === "call" ||
@@ -591,10 +598,12 @@ module.exports = {
             
             playerTurn.allInRound = game.cardRound;
 
-            game.currentBet =
-              playerTurn.currentBet < game.currentBet
-                ? game.currentBet
-                : playerTurn.currentBet;
+            game.currentBet = replaceMaxNum(game.currentBet, playerTurn.currentBet);
+
+            // game.currentBet =
+            //   playerTurn.currentBet < game.currentBet
+            //     ? game.currentBet
+            //     : playerTurn.currentBet;
 
             //console.log(playerTurn.name, " allin pot $" + playerTurn.allIn, " money: ", playerTurn.money, " post pot: ", game.pot);
           
@@ -606,11 +615,22 @@ module.exports = {
             playerTurn.currentBet += betDifference;
             playerTurn.money -= betDifference;
             playerTurn.potContribution += betDifference;
-            game.currentBet = playerTurn.currentBet;
+            // game.currentBet = playerTurn.currentBet;
+            game.currentBet = replaceMaxNum(game.currentBet, playerTurn.currentBet);
           }
         } else {
           currentAction = "check";
-          console.log(playerTurn.name + " Player checks.");
+          game.temp_check_total++;
+          console.log("game.currentBet $", game.currentBet)
+          console.log(playerTurn.name + " checks.", game.temp_check_total);
+          if (game.temp_check_total> 10){
+            for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
+        
+            console.log(game.bettingRoundPlayers[j])
+         
+            }
+            throw new Error("Check Issue")
+          }
         }
       } else {
         //console.log("% Fold % CB:", playerTurn.currentBet, " GB", game.currentBet);
@@ -708,19 +728,21 @@ module.exports = {
         );
       }
   
-      // console.log("highestBettingAmount", highestBettingAmount);
+      console.log("highestBettingAmount", highestBettingAmount);
   
       for (let i = 0; i < game.bettingRoundPlayers.length; i++) {
-        // console.log("game.bettingRoundPlayers[i].currentBet !== highestBettingAmount", game.bettingRoundPlayers[i].currentBet !== highestBettingAmount)
-        // console.log("!game.bettingRoundPlayers[i].allIn", !game.bettingRoundPlayers[i].allIn)
+        console.log(game.bettingRoundPlayers[i].name)
+        console.log("game.bettingRoundPlayers[i].currentBet !== highestBettingAmount", game.bettingRoundPlayers[i].currentBet !== highestBettingAmount)
+        console.log("!game.bettingRoundPlayers[i].allIn", !game.bettingRoundPlayers[i].allIn)
         if (
           game.bettingRoundPlayers[i].currentBet !== highestBettingAmount &&
           !game.bettingRoundPlayers[i].allIn
         ) {
+          console.log("$return false");
           return false;
         }
       }
-  
+      console.log("$return true");
       return true;
     },
   
@@ -728,6 +750,7 @@ module.exports = {
       game.firstRound = true;
       game.currentBet = 0;
       game.bettingRoundRaises = 0;
+      game.temp_check_total = 0;
       
       game.bettingRoundPlayers.forEach((player) => {
         player.currentBet = 0;

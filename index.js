@@ -1,6 +1,8 @@
 const inquirer = require("inquirer");
 const pokerGame = require("./poker")
 
+
+
 const run = async () => {
   const human = await inquirer.prompt({
     name: "name",
@@ -8,9 +10,10 @@ const run = async () => {
     message: "What is your name?",
   });
 
+  const fullResults = [];
   let testAmount = 600;
   let gameCount = 0;
-  while (testAmount === 600 && gameCount < 200){
+  while (testAmount === 600 && gameCount < 5000){
     gameCount++;
     console.info("************************** NEW GAME: " + gameCount + "**************************")
 
@@ -29,6 +32,16 @@ const run = async () => {
   console.log("Game Winner: ", poker.game.bettingRoundPlayers[0].name, "In ", poker.game.round, "Rounds");
   console.log("--------------------------------------------------")
 
+  const i = fullResults.findIndex(result => result.name === poker.game.bettingRoundPlayers[0].name);
+  if (i > -1) {
+    // We know that at least 1 object that matches has been found at the index i
+    fullResults[i].wins++;
+  }
+  else{
+    fullResults.push({"name":poker.game.bettingRoundPlayers[0].name, "wins":0, "money_avg":poker.game.bettingRoundPlayers[0].money})
+  }
+
+ 
   // poker.game.bettingRoundPlayers.forEach(player => {
   //     console.log("BPR: ", player.name, " $", player.money)
   //   });
@@ -41,6 +54,8 @@ const run = async () => {
 
   } //end while
  // console.info("************************** END GAME: " + gameCount + "**************************")
+ fullResults.sort((a, b) => b.wins - a.wins);
+ console.table(fullResults)
 };
 
 run();
