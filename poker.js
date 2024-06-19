@@ -321,7 +321,9 @@ module.exports = {
       return game;
     },
     decisionValue: function (cards, handValue, aggressionLevel, raises) {
-      const multiplier = AGGRO_MULTIPLIER;
+  
+      let aggTotal = aggressionLevel * AGGRO_MULTIPLIER;
+
       aggressionLevel = Math.floor(Math.random() * aggressionLevel) + 1;
       // console.log("cards:", cards)
       // process.exit()
@@ -368,7 +370,9 @@ module.exports = {
       //   cards[0].code,
       //   cards[1].code
       // );
-      return handValueTimesTen + aggressionLevel * multiplier - raises;
+      console.log("handValueTimesTen:", handValueTimesTen)
+      console.log("DC: ",  handValueTimesTen + (aggTotal * 5) - raises)
+      return handValueTimesTen + (aggTotal * 5) - raises;
     },
    
     bettingRound: async function (game) {
@@ -728,21 +732,21 @@ module.exports = {
         );
       }
   
-      console.log("highestBettingAmount", highestBettingAmount);
+     // console.log("highestBettingAmount", highestBettingAmount);
   
       for (let i = 0; i < game.bettingRoundPlayers.length; i++) {
-        console.log(game.bettingRoundPlayers[i].name)
-        console.log("game.bettingRoundPlayers[i].currentBet !== highestBettingAmount", game.bettingRoundPlayers[i].currentBet !== highestBettingAmount)
-        console.log("!game.bettingRoundPlayers[i].allIn", !game.bettingRoundPlayers[i].allIn)
+        // console.log(game.bettingRoundPlayers[i].name)
+        // console.log("game.bettingRoundPlayers[i].currentBet !== highestBettingAmount", game.bettingRoundPlayers[i].currentBet !== highestBettingAmount)
+        // console.log("!game.bettingRoundPlayers[i].allIn", !game.bettingRoundPlayers[i].allIn)
         if (
           game.bettingRoundPlayers[i].currentBet !== highestBettingAmount &&
           !game.bettingRoundPlayers[i].allIn
         ) {
-          console.log("$return false");
+        //  console.log("$return false");
           return false;
         }
       }
-      console.log("$return true");
+     // console.log("$return true");
       return true;
     },
   

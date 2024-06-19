@@ -13,7 +13,7 @@ const run = async () => {
   const fullResults = [];
   let testAmount = 600;
   let gameCount = 0;
-  while (testAmount === 600 && gameCount < 5000){
+  while (testAmount === 600 && gameCount < 10000){
     gameCount++;
     console.info("************************** NEW GAME: " + gameCount + "**************************")
 
@@ -38,7 +38,7 @@ const run = async () => {
     fullResults[i].wins++;
   }
   else{
-    fullResults.push({"name":poker.game.bettingRoundPlayers[0].name, "wins":0, "money_avg":poker.game.bettingRoundPlayers[0].money})
+    fullResults.push({"name":poker.game.bettingRoundPlayers[0].name, "wins":0, "aggressionLevel":poker.game.bettingRoundPlayers[0].aggressionLevel})
   }
 
  
