@@ -222,21 +222,21 @@ const handleWinnings = function (game) {
       // console.log("#2 Best Hand No Side");
   
       if (game.bettingRoundPlayers.length === 1 && game.bettingRoundPlayers[0].npc === true) {
-        if (Math.random() < 0.6) {
+        if (Math.random() < 0.8) {
           console.log(
             game.bettingRoundPlayers[0].name +
-              " wins this round and mucks hand."
+              " wins this round and mucks hand. Takes $" +  parseInt(game.pot)
           );
         } else {
           console.log(
             game.bettingRoundPlayers[0].name +
-              " wins the round and " + readHand(game.bettingRoundPlayers[0])
+              " wins the round and " + readHand(game.bettingRoundPlayers[0]) + " Takes $" +  parseInt(game.pot)
           );
         }
       } else {
         console.log(
           game.bettingRoundPlayers[0].name +
-            " wins this round. " + readHand(game.bettingRoundPlayers[0])
+            " wins this round. " + readHand(game.bettingRoundPlayers[0]) + " Takes $" +  parseInt(game.pot)
         );
       }
   

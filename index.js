@@ -13,7 +13,7 @@ const run = async () => {
   const fullResults = [];
   let testAmount = 600;
   let gameCount = 0;
-  while (testAmount === 600 && gameCount < 5000){
+  while (testAmount === 600 && gameCount < 2){
     gameCount++;
     console.info("************************** NEW GAME: " + gameCount + "**************************")
 
@@ -22,8 +22,12 @@ const run = async () => {
   while (poker.currentList.length > 1) {
 
     // console.info("************************** IN GAME: " + gameCount + "**************************")
-    // console.log("ROUND " + poker.game.round + " Begins.");
-
+    console.log("ROUND " + poker.game.round + " Begins.");
+  
+    for (let j = 0; j < poker.game.bettingRoundPlayers.length; j++) {
+      console.log (poker.game.bettingRoundPlayers[j].name + " has " + poker.game.bettingRoundPlayers[j].money + " In Chips")
+    
+    }
     poker = await pokerGame.playRound(poker.game, poker.currentList);
    
     poker.game = pokerGame.gameConfig(poker.game, poker.currentList);

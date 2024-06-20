@@ -173,12 +173,15 @@ module.exports = {
       }
   
       game.pot = 0;
-      let smbPos = 1;
+      let smbPos = game.bettingRoundPlayers.length-2;
+      let bigPos = game.bettingRoundPlayers.length-1;
   
-      if (game.bettingRoundPlayers.length === 2) {
-       // console.log("Two Players Left - Small Blind is now 0")
-        smbPos = 0;
-      }
+      // if (game.bettingRoundPlayers.length === 2) {
+      //  // console.log("Two Players Left - Small Blind is now 0")
+      //   smbPos = 0;
+      // }
+
+      // 0, 1, 2, 3
 
       //console.log("SMBLIND", game.bettingRoundPlayers);
   
@@ -217,37 +220,37 @@ module.exports = {
         );
       }
   
-      if (game.bigBlind >= game.bettingRoundPlayers[smbPos + 1].money) {
-        //console.log("--- " , currentList[smbPos + 1].name , " game.bigBlind > currentList[smbPos + 1].money BIG BLIND:", game.bigBlind, "MONEY:" . currentList[smbPos + 1].money, " Pre Game Pot: ", game.pot)
-        game.pot += game.bettingRoundPlayers[smbPos + 1].money;
-        game.currentBet = replaceMaxNum(game.currentBet, game.bettingRoundPlayers[smbPos + 1].money);
-        game.bettingRoundPlayers[smbPos + 1].potContribution = game.bettingRoundPlayers[smbPos + 1].money;
-        game.bettingRoundPlayers[smbPos + 1].currentBet = game.bettingRoundPlayers[smbPos + 1].money;
-        game.bettingRoundPlayers[smbPos + 1].allIn = game.pot;
+      if (game.bigBlind >= game.bettingRoundPlayers[bigPos].money) {
+        //console.log("--- " , currentList[bigPos].name , " game.bigBlind > currentList[bigPos].money BIG BLIND:", game.bigBlind, "MONEY:" . currentList[bigPos].money, " Pre Game Pot: ", game.pot)
+        game.pot += game.bettingRoundPlayers[bigPos].money;
+        game.currentBet = replaceMaxNum(game.currentBet, game.bettingRoundPlayers[bigPos].money);
+        game.bettingRoundPlayers[bigPos].potContribution = game.bettingRoundPlayers[bigPos].money;
+        game.bettingRoundPlayers[bigPos].currentBet = game.bettingRoundPlayers[bigPos].money;
+        game.bettingRoundPlayers[bigPos].allIn = game.pot;
         console.log("BIG ALL IN ROUND", game.cardRound);
-        game.bettingRoundPlayers[smbPos + 1].allInRound = game.cardRound;
-        game.bettingRoundPlayers[smbPos + 1].allInBet =
-        game.bettingRoundPlayers[smbPos + 1].currentBet;
-        game.bettingRoundPlayers[smbPos + 1].money = 0;
+        game.bettingRoundPlayers[bigPos].allInRound = game.cardRound;
+        game.bettingRoundPlayers[bigPos].allInBet =
+        game.bettingRoundPlayers[bigPos].currentBet;
+        game.bettingRoundPlayers[bigPos].money = 0;
         console.log(
           "Big Blind Posted by " +
-            game.bettingRoundPlayers[smbPos + 1].name +
+            game.bettingRoundPlayers[bigPos].name +
             " for $" +
-            game.bettingRoundPlayers[smbPos + 1].currentBet +
+            game.bettingRoundPlayers[bigPos].currentBet +
             " causing them to go all in."
         );
       } else {
-        game.bettingRoundPlayers[smbPos + 1].money -= game.bigBlind;
+        game.bettingRoundPlayers[bigPos].money -= game.bigBlind;
         game.currentBet = replaceMaxNum(game.currentBet, game.bigBlind);
         
-        game.bettingRoundPlayers[smbPos + 1].potContribution = game.bigBlind;
+        game.bettingRoundPlayers[bigPos].potContribution = game.bigBlind;
         game.pot += game.bigBlind;
-        game.bettingRoundPlayers[smbPos + 1].currentBet = game.bigBlind;
+        game.bettingRoundPlayers[bigPos].currentBet = game.bigBlind;
         console.log(
           "Big Blind Posted by " +
-            game.bettingRoundPlayers[smbPos + 1].name +
+            game.bettingRoundPlayers[bigPos].name +
             " for $" +
-            game.bettingRoundPlayers[smbPos + 1].currentBet +
+            game.bettingRoundPlayers[bigPos].currentBet +
             "."
         );
       }
@@ -257,7 +260,7 @@ module.exports = {
       //  console.log("AFTER BLIND", game.bettingRoundPlayers[i].potContribution) 
       // }
 
-      //console.log("BigBlind:", game.bettingRoundPlayers[smbPos + 1].name, " SB:", game.bettingRoundPlayers[smbPos + 1].currentBet);
+      //console.log("BigBlind:", game.bettingRoundPlayers[bigPos].name, " SB:", game.bettingRoundPlayers[bigPos].currentBet);
       return game;
     },
     shuffleDeck: function(cards){
@@ -324,9 +327,9 @@ module.exports = {
     decisionValue: function (cards, handValue, aggressionLevel, raises) {
   
       aggressionLevel = Math.floor(Math.random() * aggressionLevel) + 1;
-      console.log("aggressionLevel", aggressionLevel)
+      // console.log("aggressionLevel", aggressionLevel)
       let aggTotal = aggressionLevel * AGGRO_MULTIPLIER;
-      console.log("aggTotal", aggTotal)
+      // console.log("aggTotal", aggTotal)
      
       // console.log("cards:", cards)
       // process.exit()
@@ -373,8 +376,8 @@ module.exports = {
       //   cards[0].code,
       //   cards[1].code
       // );
-      console.log("handValueTimesTen:", handValueTimesTen)
-      console.log("DC: ",  handValueTimesTen + (aggTotal * 5) - raises)
+      // console.log("handValueTimesTen:", handValueTimesTen)
+      // console.log("DC: ",  handValueTimesTen + (aggTotal * 5) - raises)
       let dvSubFinal = handValueTimesTen + (aggTotal * 5) - raises;
       
       if (aggressionLevel>4 && dvSubFinal > DECISION_RANGE.CALL){
@@ -570,6 +573,7 @@ module.exports = {
       } else if (
         playerAction === "call" ||
         (!playerAction && decisionValue > DECISION_RANGE.CALL)
+        ||  (!playerAction && game.currentBet == playerTurn.currentBet)
       ) {
         currentAction = "call";
         if (playerTurn.currentBet < game.currentBet) {
@@ -980,6 +984,7 @@ module.exports = {
         );
       }
 
+      console.log("Declare Winner")
       game = this.declareWinner(game);
       game = handleWinnings(game);
 
@@ -990,13 +995,14 @@ module.exports = {
 
       //700 600
       
-      // console.log("Math FIX:", fixMathTotal, game.gameTotal)
+      
       if (fixMathTotal != game.gameTotal){
 
         let mathDifference = fixMathTotal - game.gameTotal;
         let breakDown = parseInt(mathDifference/game.bettingRoundPlayers.length);
         let remaining = breakDown % game.bettingRoundPlayers.length;
-        // console.log("remaining:", remaining, "MD:", mathDifference, "BD:", breakDown)
+        console.log("Math FIX:", fixMathTotal, game.gameTotal)
+        console.log("remaining:", remaining, "MD:", mathDifference, "BD:", breakDown)
         
         // for (let i = 0; i <  game.bettingRoundPlayers.length; i++){
         //   console.log(game.bettingRoundPlayers[i].name)
