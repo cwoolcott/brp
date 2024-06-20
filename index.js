@@ -13,7 +13,7 @@ const run = async () => {
   const fullResults = [];
   let testAmount = 600;
   let gameCount = 0;
-  while (testAmount === 600 && gameCount < 10){
+  while (testAmount === 600 && gameCount < 5000){
     gameCount++;
     console.info("************************** NEW GAME: " + gameCount + "**************************")
 

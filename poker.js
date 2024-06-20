@@ -323,9 +323,11 @@ module.exports = {
     },
     decisionValue: function (cards, handValue, aggressionLevel, raises) {
   
-      let aggTotal = aggressionLevel * AGGRO_MULTIPLIER;
-
       aggressionLevel = Math.floor(Math.random() * aggressionLevel) + 1;
+      console.log("aggressionLevel", aggressionLevel)
+      let aggTotal = aggressionLevel * AGGRO_MULTIPLIER;
+      console.log("aggTotal", aggTotal)
+     
       // console.log("cards:", cards)
       // process.exit()
       let topCards = ["ACE", "KING", "QUEEN", "JACK"];
@@ -373,7 +375,19 @@ module.exports = {
       // );
       console.log("handValueTimesTen:", handValueTimesTen)
       console.log("DC: ",  handValueTimesTen + (aggTotal * 5) - raises)
-      return handValueTimesTen + (aggTotal * 5) - raises;
+      let dvSubFinal = handValueTimesTen + (aggTotal * 5) - raises;
+      
+      if (aggressionLevel>4 && dvSubFinal > DECISION_RANGE.CALL){
+        
+       if ((Math.floor(Math.random() * 2) + 1) ===1){
+        dvSubFinal += dvSubFinal + Math.floor(Math.random() * 10) + 1;
+       }
+       else{
+        dvSubFinal -= dvSubFinal + Math.floor(Math.random() * 10) + 1;
+       }
+
+      }
+      return dvSubFinal;
     },
    
     bettingRound: async function (game) {

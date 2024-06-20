@@ -8,7 +8,7 @@ let player = [];
 player.push( 
     {
         name:"player 1",
-        aggressionLevel: 1,
+        aggressionLevel: 5,
         cards:[
         {
             "code": "JS",
@@ -36,7 +36,7 @@ player.push(
 player.push( 
     {
         name:"player 2",
-        aggressionLevel: 1,
+        aggressionLevel: 5,
         cards:[
         {
             "code": "5S",
@@ -64,7 +64,7 @@ player.push(
 player.push( 
     {
         name:"player 3",
-        aggressionLevel: 9,
+        aggressionLevel: 5,
         cards:[
         {
             "code": "5S",
