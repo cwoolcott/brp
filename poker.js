@@ -3,7 +3,8 @@ const {
   STARTING_MONEY,
   AGGRO_MULTIPLIER,
   OTHER_RAISES_MULTIPLIER,
-  NUM_OF_SHUFFLES
+  NUM_OF_SHUFFLES,
+  DECISION_RANGE
 } = require("./constants");
 
 const analyzeHand = require("./analyzehand");
@@ -512,7 +513,7 @@ module.exports = {
   
       if (
         playerAction === "raise" ||
-        (!playerAction && (raiseOption && decisionValue > 20))
+        (!playerAction && (raiseOption && decisionValue > DECISION_RANGE.RAISE))
       ) {
         currentAction = "raise";
         //20
@@ -554,7 +555,7 @@ module.exports = {
         }
       } else if (
         playerAction === "call" ||
-        (!playerAction && decisionValue > 10)
+        (!playerAction && decisionValue > DECISION_RANGE.CALL)
       ) {
         currentAction = "call";
         if (playerTurn.currentBet < game.currentBet) {
