@@ -37,7 +37,7 @@ const utils = {
     } else {
       prefix = "a";
     }
-    const displayCards = prefix + " " + value + " of " + suit;
+    const displayCards =  prefix + " [" + value + " of " + suit + "] ";
     return displayCards;
   },
 };

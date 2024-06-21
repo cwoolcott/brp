@@ -113,6 +113,16 @@ else if (cardStrength[0] === "Full House") {
 };
 
 const handleWinnings = function (game) {
+  let messageString = "";
+   //removal of player with no hands /
+   console.log("----Pre Handle Winnings ----");
+   for (let i = 0; i < game.bettingRoundPlayers.length; i++) {
+    console.log(game.bettingRoundPlayers[i].name)
+    console.log(game.bettingRoundPlayers[i].money)
+  }
+
+  let pre_brp = JSON.parse(JSON.stringify(game.bettingRoundPlayers));
+
     const allInPlayers = game.bettingRoundPlayers.filter(player => player.allIn);
     const allInAmounts = allInPlayers.map(player => player.allIn);
     const minAllIn = Math.min(...allInAmounts);
@@ -128,6 +138,7 @@ const handleWinnings = function (game) {
           JSON.stringify(player.cardStrength) === JSON.stringify(game.bettingRoundPlayers[0].cardStrength);
       })
     ) {
+      console.log("#HW 1");
       // console.log("#1 Count players with same hand and all in amounts");
       //Count players with same hand and all in amounts
       let allInPlayers = [];
@@ -177,6 +188,7 @@ const handleWinnings = function (game) {
           }
           });
         }
+        messageString += "All Split Pot with ", readHand(game.bettingRoundPlayers[0])
       }
       //some other player(s) have same best hand
       else{
@@ -209,35 +221,33 @@ const handleWinnings = function (game) {
         game.bettingRoundPlayers[sameHand].money += remainingPot;
         roundWinnings += remainingPot
         
-
+        messageString += "Split Pot", readHand(game.bettingRoundPlayers[0]);
       }
       
-      console.log(readHand(game.bettingRoundPlayers[0]));
+    
       
       //first player wins - is not all in or is all in but pot total
     } else if (
       !game.bettingRoundPlayers[0].allIn ||
       game.bettingRoundPlayers[0].allIn === game.pot
     ) {
+      console.log("#HW 2");
       // console.log("#2 Best Hand No Side");
   
       if (game.bettingRoundPlayers.length === 1 && game.bettingRoundPlayers[0].npc === true) {
         if (Math.random() < 0.8) {
-          console.log(
+          messageString +=
             game.bettingRoundPlayers[0].name +
-              " wins this round and mucks hand. Takes $" +  parseInt(game.pot)
-          );
+              " wins this round and mucks hand. Takes $" +  parseInt(game.pot);
         } else {
-          console.log(
+          messageString += 
             game.bettingRoundPlayers[0].name +
-              " wins the round and " + readHand(game.bettingRoundPlayers[0]) + " Takes $" +  parseInt(game.pot)
-          );
+              " wins the round with " + readHand(game.bettingRoundPlayers[0]) + " Takes $" +  parseInt(game.pot);
         }
       } else {
-        console.log(
+        messageString += 
           game.bettingRoundPlayers[0].name +
-            " wins this round. " + readHand(game.bettingRoundPlayers[0]) + " Takes $" +  parseInt(game.pot)
-        );
+            " wins this round. " + readHand(game.bettingRoundPlayers[0]) + " Takes $" +  parseInt(game.pot);
       }
   
       game.bettingRoundPlayers[0].money += parseInt(game.pot);
@@ -245,29 +255,35 @@ const handleWinnings = function (game) {
       
       //first player is all in but more in the pot
     } else {
-
+      console.log("#HW 3");
       // console.log("#3 Game Pot:", game.pot)
       //const correctedAllIn =  game.bettingRoundPlayers[0].allIn;
       const correctedAllIn =  game.bettingRoundPlayers[0].allIn > game.pot ? game.pot : game.bettingRoundPlayers[0].allIn;
-     // console.log("Corrected AllIn", game.bettingRoundPlayers[0].name + " gets " + correctedAllIn);
+      
+      
+
       game.bettingRoundPlayers[0].money += correctedAllIn;
       roundWinnings +=  correctedAllIn;
 
       let whatsLeft = parseInt(game.pot - correctedAllIn);
     
      // console.log("whats left", whatsLeft);
+     messageString += game.bettingRoundPlayers[0].name + "  wins sidepot " + readHand(game.bettingRoundPlayers[0]) + " and gets " + correctedAllIn;
+     
      if (whatsLeft>0){
       if (!game.bettingRoundPlayers[1]){
         game.bettingRoundPlayers[0].money += whatsLeft
       }
       else{
         game.bettingRoundPlayers[1].money += whatsLeft  
+        messageString += game.bettingRoundPlayers[1].name  + " " + " wins mainpot " + readHand(game.bettingRoundPlayers[1]) + " and gets " + parseInt(game.pot - correctedAllIn);
       }
       roundWinnings +=  whatsLeft;
       
      }
-     
 
+     console.log("message:", messageString)
+  
     }
 
     //Fix Math
@@ -289,7 +305,19 @@ const handleWinnings = function (game) {
         i--; // Adjust index after removal
       }
     }
-  
+
+    console.log("----Post Handle Winnings ----");
+    for (let i = 0; i < game.bettingRoundPlayers.length; i++) {
+     console.log(game.bettingRoundPlayers[i].name)
+     console.log(game.bettingRoundPlayers[i].money)
+   }
+   
+   let post_brp = JSON.parse(JSON.stringify(game.bettingRoundPlayers));
+  //  console.log(pre_brp, post_brp)
+
+   if (JSON.stringify(pre_brp) === JSON.stringify(post_brp)){
+    throw Error("No change after handle winnings")
+   }
     return game;
   }
 

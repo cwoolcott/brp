@@ -645,8 +645,8 @@ module.exports = {
           currentAction = "check";
           game.temp_check_total++;
           console.log("game.currentBet $", game.currentBet)
-          console.log(playerTurn.name + " checks.", game.temp_check_total);
-          if (game.temp_check_total> 10){
+          console.log(playerTurn.name + " checks.");
+          if (game.temp_check_total> 30){
             for (let j = 0; j < game.bettingRoundPlayers.length; j++) {
         
             console.log(game.bettingRoundPlayers[j])
@@ -1003,7 +1003,7 @@ module.exports = {
         let remaining = breakDown % game.bettingRoundPlayers.length;
         console.log("Math FIX:", fixMathTotal, game.gameTotal)
         console.log("remaining:", remaining, "MD:", mathDifference, "BD:", breakDown)
-        
+        throw Error("Fix Math")
         // for (let i = 0; i <  game.bettingRoundPlayers.length; i++){
         //   console.log(game.bettingRoundPlayers[i].name)
         //   console.log(game.bettingRoundPlayers[i].money)
