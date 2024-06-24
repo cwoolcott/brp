@@ -72,4 +72,5 @@ const run = async () => {
  console.table(fullResults)
 };
 
+//run test
 run();
