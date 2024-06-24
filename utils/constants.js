@@ -9,7 +9,7 @@ const constants = {
         CALL:15,
     },
     BLUFF_RND_AGGRO_LEVEL: 10,
-    BLUFF_ODDS: 5
+    BLUFF_ODDS: 3
 }
 
 
