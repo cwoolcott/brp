@@ -56,9 +56,10 @@ const run = async () => {
   }
 
  
-  // poker.game.bettingRoundPlayers.forEach(player => {
-  //     console.log("BPR: ", player.name, " $", player.money)
-  //   });
+  poker.game.bettingRoundPlayers.forEach(player => {
+      //console.log("BPR: ", player.name, " $", player.money)
+      console.log(player)
+    });
 
   //  poker.currentList.forEach(player => {
   //     console.log("CL:  ", player.name, " $", player.money)
