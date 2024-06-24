@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
-const pokerGame = require("./poker");
-const { NUM_OF_PLAYERS, STARTING_MONEY } = require("./constants");
+const pokerGame = require("./lib/poker");
+const { NUM_OF_PLAYERS, STARTING_MONEY } = require("./utils/constants");
 
 
 
@@ -14,7 +14,7 @@ const run = async () => {
   const fullResults = [];
   let testAmount = 600;
   let gameCount = 0;
-  while (testAmount === 600 && gameCount < 2000){
+  while (testAmount === 600 && gameCount < 20000){
     gameCount++;
     console.info("************************** NEW GAME: " + gameCount + "**************************")
 

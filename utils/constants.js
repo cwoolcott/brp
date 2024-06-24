@@ -7,7 +7,9 @@ const constants = {
     DECISION_RANGE: {
         RAISE:25,
         CALL:15,
-    }
+    },
+    BLUFF_RND_AGGRO_LEVEL: 10,
+    BLUFF_ODDS: 5
 }
 
 
