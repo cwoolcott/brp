@@ -1,4 +1,4 @@
-const analyzeHand = require("../analyzehand");
+const analyzeHand = require("../lib/analyzehand");
 
 let handValue = analyzeHand([
     
@@ -76,4 +76,9 @@ let handValue = analyzeHand([
 
 ]);
 
-console.log(handValue);
+describe("Hand Value", () => {
+   test('should results in a Four of a Kind of 8s and an A Kicker', () => {
+     expect(handValue).toEqual(["Four of a Kind", 8, "A"]);
+   });
+
+});

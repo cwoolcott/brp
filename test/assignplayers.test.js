@@ -1,4 +1,4 @@
-const pokerGame = require("../poker")
+const pokerGame = require("../lib/poker")
 
 function findDuplicates(arr) {
     const seen = new Map();
@@ -20,7 +20,14 @@ function findDuplicates(arr) {
     return duplicates;
 }
 
-for (i = 0; i < 20; i++){
-    let currentList = pokerGame.fillPlayers(4);
-    console.log(findDuplicates(currentList));
-}
+describe("Test 50 games for Duplicates", () => {
+    for (i = 0; i < 50; i++){
+        let currentList = pokerGame.fillPlayers(4);
+        test('Round: ' + i, () => {
+            expect(findDuplicates(currentList)).toEqual([]);
+          });
+    }
+
+});
+
+
