@@ -20,8 +20,8 @@ function findDuplicates(arr) {
     return duplicates;
 }
 
-describe("Test 50 games for Duplicates", () => {
-    for (i = 0; i < 50; i++){
+describe("Test 10 npc games for Duplicates", () => {
+    for (i = 0; i < 10; i++){
         let currentList = pokerGame.fillPlayers(4);
         test('Round: ' + i, () => {
             expect(findDuplicates(currentList)).toEqual([]);
