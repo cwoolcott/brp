@@ -1,9 +1,10 @@
 const inquirer = require("inquirer");
-const pokerGame = require("./lib/poker");
+
 const { NUM_OF_PLAYERS, STARTING_MONEY } = require("./utils/constants");
+const pokerGame = require("./lib/poker");
+const round = require("./lib/round");
 
-
-
+  
 const run = async () => {
   const human = await inquirer.prompt({
     name: "name",
@@ -14,25 +15,13 @@ const run = async () => {
   const fullResults = [];
   let testAmount = 600;
   let gameCount = 0;
-  while (testAmount === 600 && gameCount < 200){
+  //while (testAmount === 600 && gameCount < 2000){
     gameCount++;
     console.info("************************** NEW GAME: " + gameCount + "**************************")
 
   let poker = pokerGame.startGame(human.name);
- 
-  while (poker.currentList.length > 1) {
-
-    // console.info("************************** IN GAME: " + gameCount + "**************************")
-    console.log("ROUND " + poker.game.round + " Begins.");
   
-    for (let j = 0; j < poker.game.bettingRoundPlayers.length; j++) {
-      console.log (poker.game.bettingRoundPlayers[j].name + " has " + poker.game.bettingRoundPlayers[j].money + " In Chips")
-    
-    }
-    poker = await pokerGame.playRound(poker.game, poker.currentList);
-   
-    poker.game = pokerGame.gameConfig(poker.game, poker.currentList);
-  } 
+  round(poker);
 
   console.log("Game Winner: ", poker.game.bettingRoundPlayers[0].name, "In ", poker.game.round, "Rounds");
   console.log("--------------------------------------------------")
@@ -57,8 +46,8 @@ const run = async () => {
 
  
   poker.game.bettingRoundPlayers.forEach(player => {
-      //console.log("BPR: ", player.name, " $", player.money)
-      console.log(player)
+      console.log("BPR: ", player.name, " $", player.money)
+      //console.log(player)
     });
 
   //  poker.currentList.forEach(player => {
@@ -67,7 +56,7 @@ const run = async () => {
   //   });
     
 
-  } //end while
+ // } //end while
  // console.info("************************** END GAME: " + gameCount + "**************************")
  fullResults.sort((a, b) => b.wins - a.wins);
  console.table(fullResults)
