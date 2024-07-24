@@ -10,7 +10,6 @@ const analyzeHand = require("./lib/analyzehand");
 
 const handleWinnings = require("./lib/handlewinnings");
 
-
 const {
     OTHER_RAISES_MULTIPLIER,
     DECISION_RANGE,
@@ -24,26 +23,36 @@ const pokerGame = require("./lib/poker");
 
 
 const run = async () => {
+    let displayMessage = '';
+
     const human = await inquirer.prompt({
         name: "name",
-        type: "input",
-        message: "What is your name?",
+        type: "list",
+        choices: ['yes','no','comp_only'],
+        message: 'Would you like to start a new game?',
     });
+
+    if (human.name==='no'){
+        displayMessage = 'See you soon! Watch for tourment play and online ranking comming soon.';
+        return displayMessage;
+    }
 
     const fullResults = [];
     let gameCount = 0;
 
     async function newGameLoop(gameCount) {
         gameCount++;
-        console.info("************************** NEW GAME: " + gameCount + "**************************")
-
+        //console.info("************************** NEW GAME: " + gameCount + "**************************")
+       
         let poker = pokerGame.startGame(human.name);
+
+        poker.game.displayMessage =  "Game " + gameCount + " begins. "
 
         async function newRoundLoop(poker) {
 
             // console.info("************************** IN GAME: " + gameCount + "**************************")
             console.log("ROUND " + poker.game.round + " Begins.");
-
+            poker.game.displayMessage = "ROUND " + poker.game.round + ". ";
             poker.game.cardRound = 0;
             poker.game = pokerGame.dealCards(poker.game);
             poker.game = pokerGame.takeBlinds(poker.game);
@@ -65,14 +74,6 @@ const run = async () => {
                     poker.game = pokerGame.resetBets(poker.game);
                 }
 
-                //console.log("cardDealRound: ", i)
-
-                // while (
-                //   poker.game.bettingRoundPlayers.length > 1 &&
-                //   (poker.game.firstRound === true ||
-                //     !pokerGame.isEqualBettingAmount(poker.game))
-                // ) {
-
                 async function roundLoop(poker) {
 
 
@@ -91,9 +92,11 @@ const run = async () => {
                         //Should we check match here?
                         // console.log("*Skip* " + playerTurn.name + " already allin")
                         if (playerTurn.npc === false) {
+                            poker.game.displayMessage += "You are already all in. ";
                             console.log("You are already all in.")
                         } else {
                             console.log(playerTurn.name + " is already all in.")
+                            poker.game.displayMessage += playerTurn.name + " is already all in. ";
                         }
                         playerTurn.lastBetRound = poker.game.cardRound;
                         roundOver = true;
@@ -371,5 +374,12 @@ const run = async () => {
     console.table(fullResults)
 };
 
-//run test
-run();
+
+(async () => {
+    try {
+        const text = await run();
+        console.log(text);
+    } catch (e) {
+        // Deal with the fact the chain failed
+    }
+})();
