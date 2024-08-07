@@ -43,6 +43,130 @@ const run = async () => {
     const fullResults = [];
     let gameCount = 0;
 
+    async function newGameLoop(gameCount) {
+        gameCount++;
+        console.info("************************** NEW GAME: " + gameCount + "**************************")
+       
+        let poker = pokerGame.startGame(human.name);
+
+        poker.game.displayMessage =  "Game " + gameCount + " begins. "
+
+        
+        await newRoundLoop(poker);
+
+        console.log("Game Winner: ", poker.game.bettingRoundPlayers[0].name, "In ", poker.game.round, "Rounds");
+        console.log("--------------------------------------------------")
+
+        const totalPos = STARTING_MONEY * NUM_OF_PLAYERS;
+        const i = fullResults.findIndex(result => result.name === poker.game.bettingRoundPlayers[0].name);
+        if (i > -1) {
+            // We know that at least 1 object that matches has been found at the index i
+            fullResults[i].wins++;
+            fullResults[i].totalPos += totalPos
+            fullResults[i].AvgWin = fullResults[i].totalPos / fullResults[i].wins
+        } else {
+            fullResults.push({
+                "name": poker.game.bettingRoundPlayers[0].name,
+                "wins": 1,
+                "aggressionLevel": poker.game.bettingRoundPlayers[0].aggressionLevel,
+                "totalPos": totalPos,
+                "AvgWin": totalPos / this.wins
+            })
+        }
+
+
+        poker.game.bettingRoundPlayers.forEach(player => {
+            //console.log("BPR: ", player.name, " $", player.money)
+            console.log(player)
+        });
+
+        //  poker.currentList.forEach(player => {
+        //     console.log("CL:  ", player.name, " $", player.money)
+        //    // testAmount = player.money;
+        //   });
+
+ 
+        if (gameCount < 2) {
+            await newGameLoop(gameCount)
+        }
+
+
+    } 
+
+    async function newRoundLoop(poker) {
+
+        console.info("************************** IN GAME: " + gameCount + "**************************")
+         console.log("ROUND " + poker.game.round + " Begins.");
+         poker.game.displayMessage = "ROUND " + poker.game.round + ". ";
+         poker.game.cardRound = 0;
+         poker.game = pokerGame.dealCards(poker.game);
+         poker.game = pokerGame.takeBlinds(poker.game);
+
+         console.log("poker.game", poker.game)
+         poker.currentList = pokerGame.updateCurrentPlayerMoney(poker.currentList, poker.game.bettingRoundPlayers)
+
+         
+         console.log("cardDealLoop Start")
+         await cardDealLoop(0, poker)
+         // Card Deal Loop Over
+
+         console.log("cardDealLoop Done")
+
+         for (let i = 0; i < poker.game.bettingRoundPlayers.length; i++) {
+             poker.game.bettingRoundPlayers[i].cardStrength = analyzeHand(
+                 poker.game.bettingRoundPlayers[i].cards
+             );
+         }
+
+         console.log("Declare Winner")
+         poker.game = pokerGame.declareWinner(poker.game);
+         poker.game = handleWinnings(poker.game);
+
+         let fixMathTotal = 0;
+         for (let i = 0; i < poker.currentList.length; i++) {
+             fixMathTotal += poker.currentList[i].money;
+         }
+
+         //700 600
+
+
+         if (fixMathTotal != poker.game.gameTotal) {
+
+             let mathDifference = fixMathTotal - poker.game.gameTotal;
+             let breakDown = parseInt(mathDifference / poker.game.bettingRoundPlayers.length);
+             let remaining = breakDown % poker.game.bettingRoundPlayers.length;
+             console.log("Math FIX:", fixMathTotal, poker.game.gameTotal)
+             console.log("remaining:", remaining, "MD:", mathDifference, "BD:", breakDown)
+
+             // for (let i = 0; i <  game.bettingRoundPlayers.length; i++){
+             //   console.log(game.bettingRoundPlayers[i].name)
+             //   console.log(game.bettingRoundPlayers[i].money)
+             // }
+             if (poker.game.bettingRoundPlayers[0].money > mathDifference) {
+                 poker.game.bettingRoundPlayers[0].money -= mathDifference
+             } else {
+                 poker.game.bettingRoundPlayers[1].money -= mathDifference
+             }
+
+             //throw Error("Fix Math")
+
+         }
+
+
+         poker.game = pokerGame.gameConfig(poker.game, poker.currentList);
+
+           
+
+         //End Round Loop
+         if (poker.currentList.length > 1) {
+             //Switch Positions
+             console.log("&&&&&&New Round COnfig&&&&&")
+             poker.game.bettingRoundPlayers = pokerGame.assignPositions([...poker.game.bettingRoundPlayers]);
+             console.log("%% After Assign in Round");
+             await newRoundLoop(poker)
+         }
+     }
+
     async function cardDealLoop(i, poker) {
         //for (let i = 0; i < pokerGame.cardDeal.length; i++) {
         console.log("CardLoop",i)
@@ -258,131 +382,13 @@ const run = async () => {
             }
         }
     }
+
+   
+
     
-    async function newRoundLoop(poker) {
 
-        console.info("************************** IN GAME: " + gameCount + "**************************")
-         console.log("ROUND " + poker.game.round + " Begins.");
-         poker.game.displayMessage = "ROUND " + poker.game.round + ". ";
-         poker.game.cardRound = 0;
-         poker.game = pokerGame.dealCards(poker.game);
-         poker.game = pokerGame.takeBlinds(poker.game);
-
-         console.log("poker.game", poker.game)
-         poker.currentList = pokerGame.updateCurrentPlayerMoney(poker.currentList, poker.game.bettingRoundPlayers)
-
-         
-         console.log("cardDealLoop Start")
-         await cardDealLoop(0, poker)
-         // Card Deal Loop Over
-
-         console.log("cardDealLoop Done")
-
-         for (let i = 0; i < poker.game.bettingRoundPlayers.length; i++) {
-             poker.game.bettingRoundPlayers[i].cardStrength = analyzeHand(
-                 poker.game.bettingRoundPlayers[i].cards
-             );
-         }
-
-         console.log("Declare Winner")
-         poker.game = pokerGame.declareWinner(poker.game);
-         poker.game = handleWinnings(poker.game);
-
-         let fixMathTotal = 0;
-         for (let i = 0; i < poker.currentList.length; i++) {
-             fixMathTotal += poker.currentList[i].money;
-         }
-
-         //700 600
-
-
-         if (fixMathTotal != poker.game.gameTotal) {
-
-             let mathDifference = fixMathTotal - poker.game.gameTotal;
-             let breakDown = parseInt(mathDifference / poker.game.bettingRoundPlayers.length);
-             let remaining = breakDown % poker.game.bettingRoundPlayers.length;
-             console.log("Math FIX:", fixMathTotal, poker.game.gameTotal)
-             console.log("remaining:", remaining, "MD:", mathDifference, "BD:", breakDown)
-
-             // for (let i = 0; i <  game.bettingRoundPlayers.length; i++){
-             //   console.log(game.bettingRoundPlayers[i].name)
-             //   console.log(game.bettingRoundPlayers[i].money)
-             // }
-             if (poker.game.bettingRoundPlayers[0].money > mathDifference) {
-                 poker.game.bettingRoundPlayers[0].money -= mathDifference
-             } else {
-                 poker.game.bettingRoundPlayers[1].money -= mathDifference
-             }
-
-             //throw Error("Fix Math")
-
-         }
-
-
-         poker.game = pokerGame.gameConfig(poker.game, poker.currentList);
-
-           
-
-         //End Round Loop
-         if (poker.currentList.length > 1) {
-             //Switch Positions
-             console.log("&&&&&&New Round COnfig&&&&&")
-             poker.game.bettingRoundPlayers = pokerGame.assignPositions([...poker.game.bettingRoundPlayers]);
-             console.log("%% After Assign in Round");
-             await newRoundLoop(poker)
-         }
-     }
-
-    async function newGameLoop(gameCount) {
-        gameCount++;
-        console.info("************************** NEW GAME: " + gameCount + "**************************")
-       
-        let poker = pokerGame.startGame(human.name);
-
-        poker.game.displayMessage =  "Game " + gameCount + " begins. "
-
-        
-        await newRoundLoop(poker);
-
-        console.log("Game Winner: ", poker.game.bettingRoundPlayers[0].name, "In ", poker.game.round, "Rounds");
-        console.log("--------------------------------------------------")
-
-        const totalPos = STARTING_MONEY * NUM_OF_PLAYERS;
-        const i = fullResults.findIndex(result => result.name === poker.game.bettingRoundPlayers[0].name);
-        if (i > -1) {
-            // We know that at least 1 object that matches has been found at the index i
-            fullResults[i].wins++;
-            fullResults[i].totalPos += totalPos
-            fullResults[i].AvgWin = fullResults[i].totalPos / fullResults[i].wins
-        } else {
-            fullResults.push({
-                "name": poker.game.bettingRoundPlayers[0].name,
-                "wins": 1,
-                "aggressionLevel": poker.game.bettingRoundPlayers[0].aggressionLevel,
-                "totalPos": totalPos,
-                "AvgWin": totalPos / this.wins
-            })
-        }
-
-
-        poker.game.bettingRoundPlayers.forEach(player => {
-            //console.log("BPR: ", player.name, " $", player.money)
-            console.log(player)
-        });
-
-        //  poker.currentList.forEach(player => {
-        //     console.log("CL:  ", player.name, " $", player.money)
-        //    // testAmount = player.money;
-        //   });
-
- 
-        if (gameCount < 2) {
-            await newGameLoop(gameCount)
-        }
-
-
-    } //end while
     await newGameLoop(0)
+
     // console.info("************************** END GAME: " + gameCount + "**************************")
     fullResults.sort((a, b) => b.wins - a.wins);
     console.table(fullResults)
