@@ -36,13 +36,16 @@ const run = async () => {
         displayMessage = 'See you soon! Watch for tourment play and online ranking comming soon.';
         return displayMessage;
     }
+    else if (human.name==='comp_only'){
+        human.name = false;
+    }
 
     const fullResults = [];
     let gameCount = 0;
 
     async function newGameLoop(gameCount) {
         gameCount++;
-        //console.info("************************** NEW GAME: " + gameCount + "**************************")
+        console.info("************************** NEW GAME: " + gameCount + "**************************")
        
         let poker = pokerGame.startGame(human.name);
 
@@ -50,17 +53,19 @@ const run = async () => {
 
         async function newRoundLoop(poker) {
 
-            // console.info("************************** IN GAME: " + gameCount + "**************************")
+           console.info("************************** IN GAME: " + gameCount + "**************************")
             console.log("ROUND " + poker.game.round + " Begins.");
             poker.game.displayMessage = "ROUND " + poker.game.round + ". ";
             poker.game.cardRound = 0;
             poker.game = pokerGame.dealCards(poker.game);
             poker.game = pokerGame.takeBlinds(poker.game);
 
+            console.log("poker.game", poker.game)
             poker.currentList = pokerGame.updateCurrentPlayerMoney(poker.currentList, poker.game.bettingRoundPlayers)
 
             async function cardDealLoop(i = 0) {
                 //for (let i = 0; i < pokerGame.cardDeal.length; i++) {
+                console.log("CardLoop",i)
                 poker.game.currentPosition = 0;
                 poker.game.cardRound = i;
                 poker.game = pokerGame.addCard(poker.game);
@@ -271,8 +276,11 @@ const run = async () => {
                 }
 
             }
+            console.log("cardDealLoop Start")
             await cardDealLoop(0)
             // Card Deal Loop Over
+
+            console.log("cardDealLoop Done")
 
             for (let i = 0; i < poker.game.bettingRoundPlayers.length; i++) {
                 poker.game.bettingRoundPlayers[i].cardStrength = analyzeHand(
